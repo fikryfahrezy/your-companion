@@ -9,7 +9,10 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "test": "bun test",
+    "test": "bun test src",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium",
+    "test:e2e:ui": "playwright test --ui",
     "ts:check": "tsc --noEmit",
     "prepare": "bun -e \"import { execSync } from 'node:child_process'; if (process.env.NODE_ENV !== 'production' && process.env.CI !== 'true') execSync('husky .husky', { stdio: 'inherit', shell: true });\""
   },
@@ -35,6 +38,7 @@
   },
   "devDependencies": {
     "@babel/core": "8.0.1",
+    "@playwright/test": "1.62.0",
     "@rolldown/plugin-babel": "0.2.3",
     "@tailwindcss/vite": "4.2.2",
     "@tanstack/react-query-devtools": "5.101.4",
