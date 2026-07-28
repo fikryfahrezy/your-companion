@@ -2,6 +2,8 @@
 
 A responsive hotel operations dashboard for monitoring guest service requests, spotting SLA and payment issues, and moving orders through their lifecycle.
 
+**Live deployment:** [your-companion.fahrezy.work](https://your-companion.fahrezy.work)
+
 ## AI assistance
 
 This project was developed with AI assistance from OpenAI Codex using **GPT-5.6-Sol** with **high reasoning effort**.
