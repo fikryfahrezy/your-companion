@@ -1,0 +1,205 @@
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Hotel01Icon, Moon02Icon, Sun03Icon } from "@hugeicons/core-free-icons";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router";
+import { appConfig } from "~/app/app-config";
+import {
+  getPageTitle,
+  isNavigationItemActive,
+  navigationItems,
+} from "~/app/route-registry";
+import { Button } from "~/components/ui/button";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+  useSidebar,
+} from "~/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+
+function Navigation() {
+  const location = useLocation();
+  const { setOpenMobile } = useSidebar();
+
+  return (
+    <SidebarGroup className="px-3 group-data-[collapsible=icon]:px-2">
+      <SidebarGroupContent>
+        <SidebarMenu className="gap-1">
+          {navigationItems.map((item) => {
+            const isActive = isNavigationItemActive(item, location.pathname);
+
+            return (
+              <SidebarMenuItem key={item.to}>
+                <SidebarMenuButton
+                  className="h-10 rounded-lg px-3 text-sm data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:shadow-sm hover:data-active:bg-sidebar-primary hover:data-active:text-sidebar-primary-foreground"
+                  isActive={isActive}
+                  render={
+                    <NavLink
+                      end={item.end}
+                      onClick={() => setOpenMobile(false)}
+                      to={item.to}
+                    />
+                  }
+                  tooltip={item.label}
+                >
+                  <HugeiconsIcon icon={item.icon} size={18} strokeWidth={2} />
+                  <span>{item.label}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}
+
+function AppSidebar() {
+  return (
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="border-b border-sidebar-border px-4 py-5 group-data-[collapsible=icon]:px-2">
+        <NavLink
+          className="flex items-center gap-3 overflow-hidden"
+          aria-label={`${appConfig.brand.name} overview`}
+          to="/"
+        >
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-lg">
+            <HugeiconsIcon icon={Hotel01Icon} size={20} strokeWidth={2} />
+          </span>
+          <span className="min-w-0 group-data-[collapsible=icon]:hidden">
+            <span className="block font-heading text-base font-bold tracking-tight">
+              {appConfig.brand.name}
+            </span>
+            <span className="block text-[10px] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+              {appConfig.brand.tagline}
+            </span>
+          </span>
+        </NavLink>
+      </SidebarHeader>
+
+      <SidebarContent className="pt-3">
+        <Navigation />
+      </SidebarContent>
+
+      <SidebarFooter className="border-t border-sidebar-border p-3 group-data-[collapsible=icon]:p-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              className="h-14 rounded-xl bg-sidebar-accent/70 px-3 hover:bg-sidebar-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-0!"
+              size="lg"
+              tooltip={`${appConfig.operator.name} · ${appConfig.operator.role}`}
+            >
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary group-data-[collapsible=icon]:size-8">
+                {appConfig.operator.initials}
+              </span>
+              <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
+                <span className="block truncate text-sm font-semibold">
+                  {appConfig.operator.name}
+                </span>
+                <span className="block truncate text-xs text-muted-foreground">
+                  {appConfig.operator.role}
+                </span>
+              </span>
+              <span
+                className="ml-auto size-2 rounded-full bg-emerald-500 group-data-[collapsible=icon]:hidden"
+                title="Online"
+              />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+
+function ThemeToggle() {
+  const [dark, setDark] = useState(() => {
+    const savedTheme = localStorage.getItem(appConfig.themeStorageKey);
+    if (savedTheme) return savedTheme === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem(appConfig.themeStorageKey, dark ? "dark" : "light");
+  }, [dark]);
+
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            aria-label={dark ? "Use light theme" : "Use dark theme"}
+            onClick={() => setDark((current) => !current)}
+            size="icon"
+            variant="ghost"
+          />
+        }
+      >
+        <HugeiconsIcon
+          icon={dark ? Sun03Icon : Moon02Icon}
+          size={18}
+          strokeWidth={2}
+        />
+      </TooltipTrigger>
+      <TooltipContent>{dark ? "Light theme" : "Dark theme"}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+export function AppShell() {
+  const location = useLocation();
+  const pageTitle = getPageTitle(location.pathname);
+
+  return (
+    <SidebarProvider>
+      <a
+        className="sr-only z-[110] rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        href="#main-content"
+      >
+        Skip to content
+      </a>
+
+      <AppSidebar />
+
+      <SidebarInset className="min-w-0 bg-muted/35">
+        <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center border-b bg-background/90 px-4 backdrop-blur md:px-6 lg:px-8">
+          <SidebarTrigger className="mr-2" />
+          <div className="mr-3 h-4 w-px bg-border" aria-hidden="true" />
+          <div>
+            <p className="text-sm font-semibold">{pageTitle}</p>
+            <p className="hidden text-xs text-muted-foreground sm:block">
+              {appConfig.hotel.name} · {appConfig.hotel.location}
+            </p>
+          </div>
+
+          <div className="ml-auto flex items-center">
+            <ThemeToggle />
+          </div>
+        </header>
+
+        <div
+          className="mx-auto w-full max-w-[1600px] flex-1 p-4 md:p-6 lg:p-8"
+          id="main-content"
+        >
+          <Outlet />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}

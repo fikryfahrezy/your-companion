@@ -12,13 +12,13 @@
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+html.dark {
+  color-scheme: dark;
 }
 
 :root {
@@ -138,7 +138,7 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply min-w-80 bg-background text-foreground antialiased;
   }
   html {
     @apply font-sans;
