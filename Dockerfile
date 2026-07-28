@@ -1,7 +1,7 @@
 FROM oven/bun:1.3.14-debian AS development-dependencies-env
 COPY . /app
 WORKDIR /app
-RUN bun ci
+RUN bun ci --verbose --no-cache
 
 FROM oven/bun:1.3.14-debian AS build-env
 COPY . /app/
