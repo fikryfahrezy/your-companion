@@ -25,6 +25,7 @@ import {
 } from "~/features/orders/config/order-policy";
 import { formatRelativeTime } from "~/lib/formatters";
 import type { Order } from "~/features/orders/model/order";
+import { orderPaths } from "~/features/orders/routes/order-paths";
 
 export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
   return (
@@ -44,7 +45,7 @@ export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
             <Link
               className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/70"
               key={order.id}
-              to={`/orders/${order.id}`}
+              to={orderPaths.details(order.id)}
             >
               <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
                 <HugeiconsIcon
@@ -83,7 +84,7 @@ export function RecentOrdersCard({ orders }: { orders: Order[] }) {
         <CardAction>
           <Button
             nativeButton={false}
-            render={<Link to="/orders" />}
+            render={<Link to={orderPaths.list} />}
             size="sm"
             variant="ghost"
           >
@@ -98,7 +99,7 @@ export function RecentOrdersCard({ orders }: { orders: Order[] }) {
           <Link
             className="grid grid-cols-[1fr_auto] items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/60"
             key={order.id}
-            to={`/orders/${order.id}`}
+            to={orderPaths.details(order.id)}
           >
             <span className="min-w-0">
               <span className="block truncate text-xs font-semibold">

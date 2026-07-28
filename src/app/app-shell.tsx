@@ -30,6 +30,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { dashboardPaths } from "~/features/dashboard/routes/dashboard-paths";
 import { trackEvent } from "~/lib/analytics";
 
 function Navigation() {
@@ -76,7 +77,7 @@ function AppSidebar() {
         <NavLink
           className="flex items-center gap-3 overflow-hidden"
           aria-label={`${appConfig.brand.name} overview`}
-          to="/"
+          to={dashboardPaths.overview}
         >
           <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-lg">
             <HugeiconsIcon icon={Hotel01Icon} size={20} strokeWidth={2} />

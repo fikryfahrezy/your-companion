@@ -1,83 +1,26 @@
-import {
-  DashboardSquare01Icon,
-  Invoice02Icon,
-} from "@hugeicons/core-free-icons";
-import { lazy, type ComponentType, type LazyExoticComponent } from "react";
+import { lazy } from "react";
 import { matchPath } from "react-router";
+import type { AppRouteRegistration, NavigationItem } from "~/types/route";
+import { dashboardRoute } from "~/features/dashboard/routes/dashboard-route";
+import { ordersRoute } from "~/features/orders/routes/orders-route";
 
-type NavigationIcon = typeof DashboardSquare01Icon;
+export type { NavigationItem } from "~/types/route";
 
-export type NavigationItem = {
-  label: string;
-  to: string;
-  icon: NavigationIcon;
-  end: boolean;
-};
-
-type RouteRegistrationBase = {
-  id: string;
-  title: string;
-  Component: LazyExoticComponent<ComponentType>;
-  navigation?: NavigationItem;
-};
-
-type IndexRouteRegistration = RouteRegistrationBase & {
-  index: true;
-  path?: never;
-};
-
-type PathRouteRegistration = RouteRegistrationBase & {
-  index?: false;
-  path: string;
-};
-
-export type AppRouteRegistration =
-  | IndexRouteRegistration
-  | PathRouteRegistration;
+const notFoundRoute = {
+  id: "not-found",
+  path: "*",
+  title: "Page not found",
+  Component: lazy(() =>
+    import("~/pages/not-found-page").then((module) => ({
+      default: module.NotFoundPage,
+    })),
+  ),
+} satisfies AppRouteRegistration;
 
 export const appRoutes: readonly AppRouteRegistration[] = [
-  {
-    id: "overview",
-    index: true,
-    title: "Operations overview",
-    navigation: {
-      label: "Overview",
-      to: "/",
-      icon: DashboardSquare01Icon,
-      end: true,
-    },
-    Component: lazy(() =>
-      import("~/pages/dashboard-page").then((module) => ({
-        default: module.DashboardPage,
-      })),
-    ),
-  },
-  {
-    id: "orders",
-    path: "orders/:orderId?",
-    title: "Order management",
-    navigation: {
-      label: "Orders",
-      to: "/orders",
-      icon: Invoice02Icon,
-      end: false,
-    },
-    Component: lazy(() =>
-      import("~/pages/orders-page").then((module) => ({
-        default: module.OrdersPage,
-      })),
-    ),
-  },
-  {
-    id: "not-found",
-    path: "*",
-    title: "Page not found",
-    Component: lazy(() =>
-      import("~/pages/not-found-page").then((module) => ({
-        default: module.NotFoundPage,
-      })),
-    ),
-  },
+  dashboardRoute,
+  ordersRoute,
+  notFoundRoute,
 ];
 
 export const navigationItems = appRoutes.flatMap((route) =>

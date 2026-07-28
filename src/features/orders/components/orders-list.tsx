@@ -9,11 +9,12 @@ import {
 } from "~/features/orders/components/order-badges";
 import { isOrderSlaBreached } from "~/features/orders/config/order-policy";
 import type { Order } from "~/features/orders/model/order";
+import { orderPaths } from "~/features/orders/routes/order-paths";
 import { formatCurrency, formatRelativeTime } from "~/lib/formatters";
 import { cn } from "~/lib/utils";
 
 function orderLink(orderId: string, search: string) {
-  return { pathname: `/orders/${orderId}`, search };
+  return { pathname: orderPaths.details(orderId), search };
 }
 
 export function OrdersList({

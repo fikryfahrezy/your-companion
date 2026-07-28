@@ -12,6 +12,7 @@ import {
   serviceTypes,
   type OrderControlKey,
 } from "~/features/orders/model/order";
+import { orderPaths } from "~/features/orders/routes/order-paths";
 import { useUrlSearchParams } from "~/hooks/use-url-search-params";
 import { trackEvent } from "~/lib/analytics";
 import { getPaginationRange } from "~/lib/pagination";
@@ -96,7 +97,7 @@ export function useOrdersPage() {
 
   const closeDetails = useCallback(() => {
     void navigate(
-      { pathname: "/orders", search: searchParams.toString() },
+      { pathname: orderPaths.list, search: searchParams.toString() },
       { replace: true },
     );
   }, [navigate, searchParams]);

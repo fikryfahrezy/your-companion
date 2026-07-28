@@ -3,6 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Link } from "react-router";
 import { appConfig } from "~/app/app-config";
 import { Button } from "~/components/ui/button";
+import { orderPaths } from "~/features/orders/routes/order-paths";
 
 export function DashboardHeader({ today }: { today: string }) {
   return (
@@ -19,7 +20,7 @@ export function DashboardHeader({ today }: { today: string }) {
       <Button
         className="self-start sm:self-auto"
         nativeButton={false}
-        render={<Link to="/orders" />}
+        render={<Link to={orderPaths.list} />}
       >
         View all orders
         <HugeiconsIcon data-icon="inline-end" icon={ArrowRight01Icon} />
