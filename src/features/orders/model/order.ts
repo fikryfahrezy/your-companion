@@ -1,11 +1,19 @@
 import type { PaginatedResult } from "~/lib/pagination";
 
+export const ORDER_STATUS = {
+  NEW: "New",
+  ACKNOWLEDGED: "Acknowledged",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+  CANCELLED: "Cancelled",
+} as const;
+
 export const orderStatuses = [
-  "New",
-  "Acknowledged",
-  "In Progress",
-  "Completed",
-  "Cancelled",
+  ORDER_STATUS.NEW,
+  ORDER_STATUS.ACKNOWLEDGED,
+  ORDER_STATUS.IN_PROGRESS,
+  ORDER_STATUS.COMPLETED,
+  ORDER_STATUS.CANCELLED,
 ] as const;
 
 export const serviceTypes = [
@@ -16,7 +24,17 @@ export const serviceTypes = [
   "Spa & Massage",
 ] as const;
 
-export const paymentStatuses = ["Paid", "Pending", "Failed"] as const;
+export const PAYMENT_STATUS = {
+  PAID: "Paid",
+  PENDING: "Pending",
+  FAILED: "Failed",
+} as const;
+
+export const paymentStatuses = [
+  PAYMENT_STATUS.PAID,
+  PAYMENT_STATUS.PENDING,
+  PAYMENT_STATUS.FAILED,
+] as const;
 export const orderSortDirections = ["newest", "oldest"] as const;
 
 export type OrderStatus = (typeof orderStatuses)[number];

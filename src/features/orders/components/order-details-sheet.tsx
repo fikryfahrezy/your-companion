@@ -40,7 +40,11 @@ import {
   OrderStatusBadge,
   PaymentStatusBadge,
 } from "~/features/orders/components/order-badges";
-import type { Order, OrderStatus } from "~/features/orders/model/order";
+import {
+  ORDER_STATUS,
+  type Order,
+  type OrderStatus,
+} from "~/features/orders/model/order";
 import {
   formatCurrency,
   formatDateTime,
@@ -86,9 +90,12 @@ export function OrderDetailsSheet({
     try {
       await updateStatus.mutateAsync({ orderId: order.id, status });
       notify({
-        title: status === "Cancelled" ? "Order cancelled" : "Order updated",
+        title:
+          status === ORDER_STATUS.CANCELLED
+            ? "Order cancelled"
+            : "Order updated",
         description: `${order.id} is now ${status.toLowerCase()}.`,
-        variant: status === "Cancelled" ? "error" : "success",
+        variant: status === ORDER_STATUS.CANCELLED ? "error" : "success",
       });
       setCancelDialogOpen(false);
     } catch (error) {
@@ -167,7 +174,7 @@ export function OrderDetailsSheet({
                   <h2 className="text-xs font-semibold" id="progress-heading">
                     Order progress
                   </h2>
-                  {order.status === "Cancelled" ? (
+                  {order.status === ORDER_STATUS.CANCELLED ? (
                     <div className="mt-3 flex items-center gap-2 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
                       <HugeiconsIcon icon={Alert02Icon} size={18} />
                       This order was cancelled.
@@ -272,11 +279,12 @@ export function OrderDetailsSheet({
                 <SheetFooter className="border-t bg-background px-5 py-4 sm:px-6">
                   {nextStatus && actionLabel ? (
                     <Button
+                      aria-busy={updateStatus.isPending}
                       disabled={updateStatus.isPending}
                       onClick={() => void handleStatusUpdate(nextStatus)}
                       size="lg"
                     >
-                      {updateStatus.isPending ? "Updating…" : actionLabel}
+                      {actionLabel}
                     </Button>
                   ) : null}
                   <Button
@@ -324,11 +332,12 @@ export function OrderDetailsSheet({
               Keep order
             </AlertDialogCancel>
             <AlertDialogAction
+              aria-busy={updateStatus.isPending}
               disabled={updateStatus.isPending}
-              onClick={() => void handleStatusUpdate("Cancelled")}
+              onClick={() => void handleStatusUpdate(ORDER_STATUS.CANCELLED)}
               variant="destructive"
             >
-              {updateStatus.isPending ? "Cancelling…" : "Cancel order"}
+              Cancel order
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

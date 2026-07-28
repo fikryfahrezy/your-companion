@@ -10,6 +10,7 @@ import {
   type DashboardMetrics,
 } from "~/features/dashboard/lib/dashboard-metrics";
 import {
+  PAYMENT_STATUS,
   orderStatuses,
   serviceTypes,
   type Order,
@@ -53,7 +54,9 @@ function getDashboardData(orders: Order[]): DashboardData {
     .sort((left, right) => right.count - left.count);
   const attentionOrders = orders
     .filter(
-      (order) => isOrderSlaBreached(order) || order.paymentStatus === "Failed",
+      (order) =>
+        isOrderSlaBreached(order) ||
+        order.paymentStatus === PAYMENT_STATUS.FAILED,
     )
     .sort(
       (left, right) =>

@@ -1,6 +1,10 @@
 import { appConfig } from "~/app/app-config";
 import { isFinalOrderStatus } from "~/features/orders/config/order-policy";
-import type { Order } from "~/features/orders/model/order";
+import {
+  ORDER_STATUS,
+  PAYMENT_STATUS,
+  type Order,
+} from "~/features/orders/model/order";
 import { formatCurrency } from "~/lib/formatters";
 
 export type DashboardMetrics = {
@@ -32,7 +36,8 @@ export function getDashboardMetrics(
   const openOrders = orders.filter(({ status }) => !isFinalOrderStatus(status));
   const paidOrders = orders.filter(
     ({ paymentStatus, status }) =>
-      paymentStatus === "Paid" && status !== "Cancelled",
+      paymentStatus === PAYMENT_STATUS.PAID &&
+      status !== ORDER_STATUS.CANCELLED,
   );
   const ordersToday = orders.filter((order) =>
     isOnHotelDate(order.orderTime, currentDate),
@@ -40,7 +45,8 @@ export function getDashboardMetrics(
   const revenueToday = ordersToday
     .filter(
       ({ paymentStatus, status }) =>
-        paymentStatus === "Paid" && status !== "Cancelled",
+        paymentStatus === PAYMENT_STATUS.PAID &&
+        status !== ORDER_STATUS.CANCELLED,
     )
     .reduce((total, order) => total + order.amount, 0);
   const paidRevenue = paidOrders.reduce(
@@ -52,8 +58,9 @@ export function getDashboardMetrics(
     activeGuests: new Set(openOrders.map(({ guestName }) => guestName)).size,
     pendingOrders: openOrders.length,
     revenueToday: formatCurrency(revenueToday),
-    completedOrders: ordersToday.filter(({ status }) => status === "Completed")
-      .length,
+    completedOrders: ordersToday.filter(
+      ({ status }) => status === ORDER_STATUS.COMPLETED,
+    ).length,
     averageOrderValue: formatCurrency(
       paidOrders.length > 0 ? paidRevenue / paidOrders.length : 0,
     ),
