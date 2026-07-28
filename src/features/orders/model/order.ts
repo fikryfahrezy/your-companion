@@ -23,6 +23,7 @@ export type OrderStatus = (typeof orderStatuses)[number];
 export type ServiceType = (typeof serviceTypes)[number];
 export type PaymentStatus = (typeof paymentStatuses)[number];
 export type OrderSortDirection = (typeof orderSortDirections)[number];
+export type OrderControlKey = "q" | "status" | "service" | "sort";
 
 export type Order = {
   id: string;

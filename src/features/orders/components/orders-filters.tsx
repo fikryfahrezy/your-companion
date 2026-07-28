@@ -16,6 +16,7 @@ import {
 import {
   orderStatuses,
   serviceTypes,
+  type OrderControlKey,
   type OrderSortDirection,
   type OrderStatus,
   type ServiceType,
@@ -35,7 +36,11 @@ export function OrdersFilters({
   onClear,
 }: {
   filters: OrdersFilterValues;
-  onChange: (key: string, value: string, defaultValue?: string) => void;
+  onChange: (
+    key: OrderControlKey,
+    value: string,
+    defaultValue?: string,
+  ) => void;
   onClear: () => void;
 }) {
   return (

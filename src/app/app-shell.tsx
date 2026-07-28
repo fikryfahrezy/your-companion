@@ -1,6 +1,6 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Hotel01Icon, Moon02Icon, Sun03Icon } from "@hugeicons/core-free-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { appConfig } from "~/app/app-config";
 import {
@@ -30,6 +30,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { trackEvent } from "~/lib/analytics";
 
 function Navigation() {
   const location = useLocation();
@@ -165,6 +166,14 @@ function ThemeToggle() {
 export function AppShell() {
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
+  const lastTrackedPath = useRef<string>(undefined);
+
+  useEffect(() => {
+    if (lastTrackedPath.current === location.pathname) return;
+
+    lastTrackedPath.current = location.pathname;
+    trackEvent({ name: "page_viewed", path: location.pathname });
+  }, [location.pathname]);
 
   return (
     <SidebarProvider>

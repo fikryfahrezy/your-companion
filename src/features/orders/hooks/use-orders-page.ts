@@ -10,8 +10,10 @@ import {
   orderSortDirections,
   orderStatuses,
   serviceTypes,
+  type OrderControlKey,
 } from "~/features/orders/model/order";
 import { useUrlSearchParams } from "~/hooks/use-url-search-params";
+import { trackEvent } from "~/lib/analytics";
 import { getPaginationRange } from "~/lib/pagination";
 import {
   parseAllowedIntegerParam,
@@ -72,13 +74,23 @@ export function useOrdersPage() {
   });
 
   const updateFilterParam = useCallback(
-    (key: string, value: string, defaultValue: string = filterFallback) => {
+    (
+      key: OrderControlKey,
+      value: string,
+      defaultValue: string = filterFallback,
+    ) => {
+      trackEvent({
+        name: "orders_control_changed",
+        control: key === "q" ? "search" : key,
+        value,
+      });
       updateSearchParam(key, value, { defaultValue, remove: ["page"] });
     },
     [updateSearchParam],
   );
 
   const clearFilters = useCallback(() => {
+    trackEvent({ name: "orders_filters_cleared" });
     removeSearchParams(["q", "status", "service", "page"]);
   }, [removeSearchParams]);
 
@@ -123,13 +135,20 @@ export function useOrdersPage() {
     retry: () => void ordersQuery.refetch(),
     search: searchParams.toString(),
     selectedOrder,
-    setPage: (nextPage: number) =>
-      updateSearchParam("page", String(nextPage), { defaultValue: "1" }),
-    setPageSize: (nextPageSize: number) =>
+    setPage: (nextPage: number) => {
+      trackEvent({ name: "orders_page_changed", page: nextPage });
+      updateSearchParam("page", String(nextPage), { defaultValue: "1" });
+    },
+    setPageSize: (nextPageSize: number) => {
+      trackEvent({
+        name: "orders_page_size_changed",
+        pageSize: nextPageSize,
+      });
       updateSearchParam("pageSize", String(nextPageSize), {
         defaultValue: String(ORDER_LIST_CONFIG.defaultPageSize),
         remove: ["page"],
-      }),
+      });
+    },
     updateFilterParam,
   };
 }
