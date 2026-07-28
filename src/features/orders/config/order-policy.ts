@@ -1,4 +1,8 @@
-import type { Order, OrderStatus } from "~/features/orders/model/order";
+import {
+  ORDER_STATUS,
+  type Order,
+  type OrderStatus,
+} from "~/features/orders/model/order";
 
 type OrderStatusAction = {
   label: string;
@@ -26,6 +30,7 @@ export const ORDER_FINAL_STATUSES = [
 ] as const satisfies readonly OrderStatus[];
 
 export const ORDER_STATUS_TRANSITIONS = {
+  "Pending Approval": ["New", "Cancelled"],
   New: ["Acknowledged", "Cancelled"],
   Acknowledged: ["In Progress", "Cancelled"],
   "In Progress": ["Completed", "Cancelled"],
@@ -36,6 +41,7 @@ export const ORDER_STATUS_TRANSITIONS = {
 export const ORDER_STATUS_ACTIONS: Partial<
   Record<OrderStatus, OrderStatusAction>
 > = {
+  "Pending Approval": { label: "Approve request", nextStatus: "New" },
   New: { label: "Acknowledge order", nextStatus: "Acknowledged" },
   Acknowledged: { label: "Start processing", nextStatus: "In Progress" },
   "In Progress": { label: "Mark as completed", nextStatus: "Completed" },
@@ -57,6 +63,12 @@ export function isOrderSlaBreached(order: Order) {
     order.status === ORDER_SLA_POLICY.monitoredStatus &&
     Date.now() - new Date(order.orderTime).getTime() >
       ORDER_SLA_POLICY.breachAfterMinutes * 60_000
+  );
+}
+
+export function isApprovalRequired(order: Order) {
+  return (
+    order.status === ORDER_STATUS.PENDING_APPROVAL && Boolean(order.approval)
   );
 }
 

@@ -80,6 +80,17 @@ describe("order policy", () => {
     }
   });
 
+  test("requires a decision before an approval order enters the lifecycle", () => {
+    expect(ORDER_STATUS_TRANSITIONS["Pending Approval"]).toEqual([
+      "New",
+      "Cancelled",
+    ]);
+    expect(getNextOrderStatus("Pending Approval")).toBe("New");
+    expect(getOrderStatusActionLabel("Pending Approval")).toBe(
+      "Approve request",
+    );
+  });
+
   test("keeps pagination defaults within configured limits", () => {
     expect(ORDER_LIST_CONFIG.pageSizes).toContain(
       ORDER_LIST_CONFIG.defaultPageSize,

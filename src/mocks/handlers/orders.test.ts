@@ -90,6 +90,22 @@ describe("order mock API", () => {
     expect(body.message).toContain("cannot move from Completed");
   });
 
+  test("approves an order that requires manager review", async () => {
+    const response = await fetch(
+      "http://localhost/api/orders/ORD-1004/status",
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "New" }),
+      },
+    );
+    const order = (await response.json()) as Order;
+
+    expect(response.status).toBe(200);
+    expect(order.status).toBe("New");
+    expect(order.approval?.roomCapacity).toBe(2);
+  });
+
   test("creates a simulated incoming order", async () => {
     const response = await fetch("http://localhost/api/orders/simulated", {
       method: "POST",

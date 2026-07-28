@@ -1,6 +1,8 @@
 import { expect, type Locator, type Page } from "@playwright/test";
 
 const lifecycleActions = [
+  "Approve request",
+  "Reject request",
   "Acknowledge order",
   "Start processing",
   "Mark as completed",

@@ -20,6 +20,7 @@ import {
   PaymentStatusBadge,
 } from "~/features/orders/components/order-badges";
 import {
+  isApprovalRequired,
   isOrderSlaBreached,
   ORDER_SLA_POLICY,
 } from "~/features/orders/config/order-policy";
@@ -39,6 +40,7 @@ export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
       </CardHeader>
       <CardContent className="space-y-2">
         {orders.map((order) => {
+          const approvalRequired = isApprovalRequired(order);
           const slaBreached = isOrderSlaBreached(order);
 
           return (
@@ -49,7 +51,13 @@ export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
             >
               <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
                 <HugeiconsIcon
-                  icon={slaBreached ? Clock01Icon : Dollar01Icon}
+                  icon={
+                    approvalRequired
+                      ? Alert02Icon
+                      : slaBreached
+                        ? Clock01Icon
+                        : Dollar01Icon
+                  }
                   size={18}
                 />
               </span>
@@ -63,9 +71,11 @@ export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
                   </span>
                 </span>
                 <span className="mt-0.5 block truncate text-xs text-muted-foreground">
-                  {slaBreached
-                    ? `New order is past the ${ORDER_SLA_POLICY.breachAfterMinutes}-minute SLA`
-                    : "Payment failed and needs review"}
+                  {approvalRequired
+                    ? "Extra Bed request requires manager approval"
+                    : slaBreached
+                      ? `New order is past the ${ORDER_SLA_POLICY.breachAfterMinutes}-minute SLA`
+                      : "Payment failed and needs review"}
                 </span>
               </span>
             </Link>

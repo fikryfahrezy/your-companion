@@ -31,6 +31,7 @@ import { useUpdateOrderStatus } from "~/features/orders/api/orders-queries";
 import {
   getNextOrderStatus,
   getOrderStatusActionLabel,
+  isApprovalRequired,
   isFinalOrderStatus,
   isOrderSlaBreached,
   ORDER_LIFECYCLE_STATUSES,
@@ -45,6 +46,7 @@ import {
   type Order,
   type OrderStatus,
 } from "~/features/orders/model/order";
+import { approvalStyles } from "~/features/orders/lib/order-utils";
 import {
   formatCurrency,
   formatDateTime,
@@ -86,14 +88,19 @@ export function OrderDetailsSheet({
 
   const handleStatusUpdate = async (status: OrderStatus) => {
     if (!order) return;
+    const isApprovalRejection =
+      isApprovalRequired(order) && status === ORDER_STATUS.CANCELLED;
 
     try {
       await updateStatus.mutateAsync({ orderId: order.id, status });
       notify({
-        title:
-          status === ORDER_STATUS.CANCELLED
+        title: isApprovalRejection
+          ? "Request rejected"
+          : status === ORDER_STATUS.CANCELLED
             ? "Order cancelled"
-            : "Order updated",
+            : isApprovalRequired(order)
+              ? "Request approved"
+              : "Order updated",
         description: `${order.id} is now ${status.toLowerCase()}.`,
         variant: status === ORDER_STATUS.CANCELLED ? "error" : "success",
       });
@@ -117,6 +124,7 @@ export function OrderDetailsSheet({
   const currentStep = order
     ? ORDER_LIFECYCLE_STATUSES.findIndex((status) => status === order.status)
     : -1;
+  const approvalRequired = order ? isApprovalRequired(order) : false;
 
   return (
     <>
@@ -152,6 +160,36 @@ export function OrderDetailsSheet({
               </SheetHeader>
 
               <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">
+                {approvalRequired && order.approval ? (
+                  <div
+                    className={cn(
+                      "mb-5 rounded-xl border p-4",
+                      approvalStyles.callout,
+                    )}
+                  >
+                    <div className="flex gap-3">
+                      <HugeiconsIcon
+                        className="mt-0.5 shrink-0"
+                        icon={Alert02Icon}
+                        size={18}
+                        strokeWidth={2}
+                      />
+                      <div>
+                        <p className="text-xs font-semibold">
+                          Manager approval required
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed opacity-80">
+                          {order.approval.reason}
+                        </p>
+                        <p className="mt-2 text-xs font-medium">
+                          Current occupancy: {order.approval.currentOccupancy} ·
+                          Room capacity: {order.approval.roomCapacity}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
                 {isOrderSlaBreached(order) ? (
                   <div className="mb-5 flex gap-3 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-destructive">
                     <HugeiconsIcon
@@ -174,7 +212,17 @@ export function OrderDetailsSheet({
                   <h2 className="text-xs font-semibold" id="progress-heading">
                     Order progress
                   </h2>
-                  {order.status === ORDER_STATUS.CANCELLED ? (
+                  {approvalRequired ? (
+                    <div
+                      className={cn(
+                        "mt-3 flex items-center gap-2 rounded-lg p-3 text-sm",
+                        approvalStyles.waiting,
+                      )}
+                    >
+                      <HugeiconsIcon icon={Clock01Icon} size={18} />
+                      Waiting for a manager to approve or reject this request.
+                    </div>
+                  ) : order.status === ORDER_STATUS.CANCELLED ? (
                     <div className="mt-3 flex items-center gap-2 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
                       <HugeiconsIcon icon={Alert02Icon} size={18} />
                       This order was cancelled.
@@ -293,7 +341,7 @@ export function OrderDetailsSheet({
                     size="lg"
                     variant="destructive"
                   >
-                    Cancel order
+                    {approvalRequired ? "Reject request" : "Cancel order"}
                   </Button>
                 </SheetFooter>
               ) : null}
@@ -321,15 +369,18 @@ export function OrderDetailsSheet({
             <AlertDialogMedia className="rounded-full bg-destructive/10 text-destructive">
               <HugeiconsIcon icon={Alert02Icon} />
             </AlertDialogMedia>
-            <AlertDialogTitle>Cancel this order?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {approvalRequired ? "Reject this request?" : "Cancel this order?"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action will stop processing {order?.id}. The status cannot be
-              changed after cancellation.
+              {approvalRequired
+                ? `This will reject ${order?.id}. The decision cannot be changed afterward.`
+                : `This action will stop processing ${order?.id}. The status cannot be changed after cancellation.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={updateStatus.isPending}>
-              Keep order
+              {approvalRequired ? "Keep pending" : "Keep order"}
             </AlertDialogCancel>
             <AlertDialogAction
               aria-busy={updateStatus.isPending}
@@ -337,7 +388,7 @@ export function OrderDetailsSheet({
               onClick={() => void handleStatusUpdate(ORDER_STATUS.CANCELLED)}
               variant="destructive"
             >
-              Cancel order
+              {approvalRequired ? "Reject request" : "Cancel order"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

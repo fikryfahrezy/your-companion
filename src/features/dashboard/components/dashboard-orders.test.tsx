@@ -29,6 +29,17 @@ describe("dashboard order cards", () => {
       <MemoryRouter>
         <AttentionOrdersCard
           orders={[
+            createOrder({
+              approval: {
+                currentOccupancy: 2,
+                reason: "The extra bed exceeds room capacity.",
+                roomCapacity: 2,
+              },
+              guestName: "Emma Wilson",
+              id: "ORD-2000",
+              service: "Extra Bed",
+              status: "Pending Approval",
+            }),
             createOrder(),
             createOrder({
               guestName: "Bob Chen",
@@ -42,6 +53,9 @@ describe("dashboard order cards", () => {
     );
 
     expect(screen.getByText(/past the 15-minute SLA/)).toBeDefined();
+    expect(
+      screen.getByText("Extra Bed request requires manager approval"),
+    ).toBeDefined();
     expect(screen.getByText("Payment failed and needs review")).toBeDefined();
     expect(
       screen

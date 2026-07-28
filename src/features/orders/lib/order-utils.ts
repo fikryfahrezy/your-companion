@@ -4,7 +4,18 @@ import type {
   ServiceType,
 } from "~/features/orders/model/order";
 
+export const approvalStyles = {
+  badge:
+    "border-dashed border-yellow-400 bg-yellow-50 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-950 dark:text-yellow-200",
+  callout:
+    "border-yellow-300 bg-yellow-50 text-yellow-950 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-100",
+  indicator: "bg-yellow-400",
+  waiting:
+    "bg-yellow-50 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-200",
+} as const;
+
 export const statusStyles: Record<OrderStatus, string> = {
+  "Pending Approval": approvalStyles.badge,
   New: "border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-900 dark:bg-cyan-950 dark:text-cyan-300",
   Acknowledged:
     "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300",
@@ -17,6 +28,7 @@ export const statusStyles: Record<OrderStatus, string> = {
 };
 
 export const statusIndicatorStyles: Record<OrderStatus, string> = {
+  "Pending Approval": approvalStyles.indicator,
   New: "bg-cyan-500",
   Acknowledged: "bg-blue-600 dark:bg-blue-500",
   "In Progress": "bg-amber-500",

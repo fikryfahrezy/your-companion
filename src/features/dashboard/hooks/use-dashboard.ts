@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ordersQueryOptions } from "~/features/orders/api/orders-queries";
 import {
+  isApprovalRequired,
   isOrderSlaBreached,
   ORDER_LIST_CONFIG,
 } from "~/features/orders/config/order-policy";
@@ -55,6 +56,7 @@ function getDashboardData(orders: Order[]): DashboardData {
   const attentionOrders = orders
     .filter(
       (order) =>
+        isApprovalRequired(order) ||
         isOrderSlaBreached(order) ||
         order.paymentStatus === PAYMENT_STATUS.FAILED,
     )

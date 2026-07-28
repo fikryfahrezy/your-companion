@@ -1,6 +1,7 @@
 import type { PaginatedResult } from "~/lib/pagination";
 
 export const ORDER_STATUS = {
+  PENDING_APPROVAL: "Pending Approval",
   NEW: "New",
   ACKNOWLEDGED: "Acknowledged",
   IN_PROGRESS: "In Progress",
@@ -9,6 +10,7 @@ export const ORDER_STATUS = {
 } as const;
 
 export const orderStatuses = [
+  ORDER_STATUS.PENDING_APPROVAL,
   ORDER_STATUS.NEW,
   ORDER_STATUS.ACKNOWLEDGED,
   ORDER_STATUS.IN_PROGRESS,
@@ -54,6 +56,11 @@ export type Order = {
   orderTime: string;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  approval?: {
+    currentOccupancy: number;
+    reason: string;
+    roomCapacity: number;
+  };
 };
 
 export type UpdateOrderStatusInput = {

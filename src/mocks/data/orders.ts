@@ -50,8 +50,14 @@ export const initialOrders: Order[] = [
     amount: 30,
     specialRequest: "",
     orderTime: minutesAgo(12),
-    status: "Acknowledged",
+    status: "Pending Approval",
     paymentStatus: "Pending",
+    approval: {
+      currentOccupancy: 2,
+      reason:
+        "Adding one extra bed would exceed this room's standard occupancy capacity.",
+      roomCapacity: 2,
+    },
   },
   {
     id: "ORD-1005",

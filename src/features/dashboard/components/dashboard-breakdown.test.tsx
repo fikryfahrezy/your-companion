@@ -10,20 +10,22 @@ describe("dashboard breakdown components", () => {
     render(
       <OrderFlowCard
         statusCounts={[
+          { count: 1, status: "Pending Approval" },
           { count: 4, status: "New" },
           { count: 3, status: "Acknowledged" },
           { count: 2, status: "In Progress" },
           { count: 7, status: "Completed" },
           { count: 1, status: "Cancelled" },
         ]}
-        totalOrders={17}
+        totalOrders={18}
       />,
     );
 
     expect(screen.getByText("Order flow")).toBeDefined();
-    expect(screen.getByText("17")).toBeDefined();
+    expect(screen.getByText("18")).toBeDefined();
     expect(screen.getByText("total orders")).toBeDefined();
     expect(screen.getByText("In Progress")).toBeDefined();
+    expect(screen.getByText("Pending Approval")).toBeDefined();
   });
 
   test("marks the highest-demand service", () => {

@@ -88,6 +88,42 @@ describe("OrderDetailsSheet component", () => {
     expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 
+  test("shows approval context and decision actions", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <OrderDetailsSheet
+        onClose={() => {}}
+        order={createOrder({
+          approval: {
+            currentOccupancy: 2,
+            reason: "The extra bed exceeds room capacity.",
+            roomCapacity: 2,
+          },
+          service: "Extra Bed",
+          status: "Pending Approval",
+        })}
+        requestedOrderId="ORD-2001"
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(screen.getByText("Manager approval required")).toBeDefined();
+    expect(screen.getByText(/Current occupancy: 2/)).toBeDefined();
+    expect(
+      screen.getByRole("button", { name: "Approve request" }),
+    ).toBeDefined();
+
+    await user.click(screen.getByRole("button", { name: "Reject request" }));
+    const confirmation = screen.getByRole("alertdialog");
+    expect(
+      within(confirmation).getByText("Reject this request?"),
+    ).toBeDefined();
+    expect(
+      within(confirmation).getByRole("button", { name: "Keep pending" }),
+    ).toBeDefined();
+  });
+
   test("keeps terminal orders read-only", () => {
     render(
       <OrderDetailsSheet
