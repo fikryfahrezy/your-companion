@@ -14,6 +14,7 @@ test("moves a new order through every lifecycle transition", async ({
   ).toBeVisible();
 
   await details.getByRole("button", { name: "Acknowledge order" }).click();
+  await expect(details.getByText("Updating…", { exact: true })).toHaveCount(0);
   await expect(
     details.getByRole("button", { name: "Start processing" }),
   ).toBeVisible();

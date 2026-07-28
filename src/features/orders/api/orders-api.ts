@@ -45,3 +45,10 @@ export function updateOrderStatus({ orderId, status }: UpdateOrderStatusInput) {
     body: JSON.stringify({ status }),
   });
 }
+
+export function simulateIncomingOrder(signal?: AbortSignal) {
+  return apiRequest<Order>("/api/orders/simulated", {
+    method: "POST",
+    signal,
+  });
+}

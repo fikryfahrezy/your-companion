@@ -13,8 +13,10 @@ import {
   RecentOrdersCard,
 } from "~/features/dashboard/components/dashboard-orders";
 import { useDashboard } from "~/features/dashboard/hooks/use-dashboard";
+import { useSimulatedIncomingOrder } from "~/features/orders/hooks/use-simulated-incoming-order";
 
 export function DashboardPage() {
+  useSimulatedIncomingOrder();
   const dashboard = useDashboard();
 
   if (dashboard.isPending) return <PageLoadingState />;

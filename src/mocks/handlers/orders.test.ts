@@ -89,4 +89,21 @@ describe("order mock API", () => {
     expect(response.status).toBe(409);
     expect(body.message).toContain("cannot move from Completed");
   });
+
+  test("creates a simulated incoming order", async () => {
+    const response = await fetch("http://localhost/api/orders/simulated", {
+      method: "POST",
+    });
+    const order = (await response.json()) as Order;
+
+    expect(response.status).toBe(201);
+    expect(order.id).toBe("ORD-1015");
+    expect(order.status).toBe("New");
+    expect(order.guestName).toBe("Nadia Putri");
+
+    const detailResponse = await fetch(
+      `http://localhost/api/orders/${order.id}`,
+    );
+    expect(detailResponse.status).toBe(200);
+  });
 });

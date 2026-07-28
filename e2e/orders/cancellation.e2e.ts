@@ -28,6 +28,9 @@ test("cancels an active order and removes lifecycle actions", async ({
     name: "Cancel this order?",
   });
   await confirmation.getByRole("button", { name: "Cancel order" }).click();
+  await expect(
+    confirmation.getByText("Cancelling…", { exact: true }),
+  ).toHaveCount(0);
 
   await expect(
     page.getByText("Order cancelled", { exact: true }),

@@ -6,6 +6,9 @@ export const appConfig = {
   currency: "USD",
   locale: "en-US",
   themeStorageKey: "cmpnion-theme",
+  realtimeSimulation: {
+    delayMs: 5_000,
+  },
   hotel: {
     name: "Grand Horizon Hotel",
     location: "Jakarta",

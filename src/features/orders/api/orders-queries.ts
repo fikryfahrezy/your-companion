@@ -1,26 +1,23 @@
+import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import {
-  keepPreviousData,
-  queryOptions,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import {
-  listOrders,
   getOrder,
+  listOrders,
   updateOrderStatus,
   type ListOrdersOptions,
 } from "~/features/orders/api/orders-api";
+import {
+  invalidateOrderCache,
+  optimisticallyUpdateOrderStatus,
+  reconcileUpdatedOrder,
+  restoreOrderCache,
+  snapshotOrderCache,
+} from "~/features/orders/api/orders-cache";
+import { orderKeys } from "~/features/orders/api/orders-query-keys";
 import { ORDER_QUERY_CONFIG } from "~/features/orders/config/order-policy";
-import type { PaginatedOrders } from "~/features/orders/model/order";
+import { useOptimisticMutation } from "~/hooks/use-optimistic-mutation";
+import { trackEvent } from "~/lib/analytics";
 
-export const orderKeys = {
-  all: ["orders"] as const,
-  lists: () => [...orderKeys.all, "list"] as const,
-  list: (options: ListOrdersOptions = {}) =>
-    [...orderKeys.lists(), options] as const,
-  details: () => [...orderKeys.all, "detail"] as const,
-  detail: (orderId: string) => [...orderKeys.details(), orderId] as const,
-};
+export { orderKeys } from "~/features/orders/api/orders-query-keys";
 
 export function ordersQueryOptions(options: ListOrdersOptions = {}) {
   return queryOptions({
@@ -40,25 +37,34 @@ export function orderDetailQueryOptions(orderId: string) {
 }
 
 export function useUpdateOrderStatus() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useOptimisticMutation({
     mutationFn: updateOrderStatus,
-    onSuccess: async (updatedOrder) => {
-      queryClient.setQueriesData<PaginatedOrders>(
-        { queryKey: orderKeys.lists() },
-        (currentPage) =>
-          currentPage
-            ? {
-                ...currentPage,
-                items: currentPage.items.map((order) =>
-                  order.id === updatedOrder.id ? updatedOrder : order,
-                ),
-              }
-            : undefined,
-      );
-      queryClient.setQueryData(orderKeys.detail(updatedOrder.id), updatedOrder);
-      await queryClient.invalidateQueries({ queryKey: orderKeys.lists() });
+    snapshot: snapshotOrderCache,
+    update: optimisticallyUpdateOrderStatus,
+    rollback: restoreOrderCache,
+    reconcile: reconcileUpdatedOrder,
+    invalidate: invalidateOrderCache,
+    onStart: (input) => {
+      trackEvent({
+        name: "order_status_update_started",
+        orderId: input.orderId,
+        status: input.status,
+      });
+    },
+    onFailure: (error, input) => {
+      trackEvent({
+        name: "order_status_update_failed",
+        error: error.message,
+        orderId: input.orderId,
+        status: input.status,
+      });
+    },
+    onSuccess: (updatedOrder) => {
+      trackEvent({
+        name: "order_status_update_succeeded",
+        orderId: updatedOrder.id,
+        status: updatedOrder.status,
+      });
     },
   });
 }

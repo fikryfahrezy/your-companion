@@ -108,6 +108,29 @@ export const orderHandlers = [
     return HttpResponse.json(order);
   }),
 
+  http.post("*/api/orders/simulated", async () => {
+    await delay(responseDelay);
+
+    const nextSequence =
+      Math.max(...orders.map(({ id }) => Number(id.match(/\d+$/)?.[0] ?? 0))) +
+      1;
+    const incomingOrder: Order = {
+      id: `ORD-${nextSequence}`,
+      guestName: "Nadia Putri",
+      roomNumber: "608",
+      service: "Room Service",
+      quantity: 1,
+      amount: 32,
+      specialRequest: "Vegetarian meal, no dairy.",
+      orderTime: new Date().toISOString(),
+      status: "New",
+      paymentStatus: "Pending",
+    };
+
+    orders = [incomingOrder, ...orders];
+    return HttpResponse.json(incomingOrder, { status: 201 });
+  }),
+
   http.patch<{ orderId: string }, Pick<UpdateOrderStatusInput, "status">>(
     "*/api/orders/:orderId/status",
     async ({ params, request }) => {
