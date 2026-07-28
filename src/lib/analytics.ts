@@ -27,7 +27,9 @@ type AnalyticsEventInput =
       status: string;
     }
   | { name: "realtime_order_received"; orderId: string }
-  | { name: "realtime_order_failed"; error: string };
+  | { name: "realtime_order_failed"; error: string }
+  | { name: "user_signed_in"; userId: string }
+  | { name: "user_signed_out" };
 
 export type AnalyticsEvent = AnalyticsEventInput & {
   id: string;

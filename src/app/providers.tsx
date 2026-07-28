@@ -4,15 +4,18 @@ import { useState, type PropsWithChildren } from "react";
 import { createQueryClient } from "~/app/query-client";
 import { ToastProvider } from "~/components/feedback/toast-provider";
 import { TooltipProvider } from "~/components/ui/tooltip";
+import { AuthProvider } from "~/features/auth/context/auth-provider";
 
 export function AppProviders({ children }: PropsWithChildren) {
   const [queryClient] = useState(createQueryClient);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <ToastProvider>{children}</ToastProvider>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </TooltipProvider>
+      </AuthProvider>
       {import.meta.env.DEV ? (
         <ReactQueryDevtools initialIsOpen={false} />
       ) : null}

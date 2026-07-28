@@ -6,6 +6,9 @@ export const appConfig = {
   currency: "USD",
   locale: "en-US",
   themeStorageKey: "cmpnion-theme",
+  auth: {
+    sessionStorageKey: "cmpnion-auth-session",
+  },
   realtimeSimulation: {
     delayMs: 5_000,
   },

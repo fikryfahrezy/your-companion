@@ -1,5 +1,10 @@
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Hotel01Icon, Moon02Icon, Sun03Icon } from "@hugeicons/core-free-icons";
+import {
+  Hotel01Icon,
+  Logout02Icon,
+  Moon02Icon,
+  Sun03Icon,
+} from "@hugeicons/core-free-icons";
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import { appConfig } from "~/app/app-config";
@@ -31,6 +36,7 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { dashboardPaths } from "~/features/dashboard/routes/dashboard-paths";
+import { useAuth } from "~/features/auth/context/auth-provider";
 import { trackEvent } from "~/lib/analytics";
 
 function Navigation() {
@@ -71,6 +77,9 @@ function Navigation() {
 }
 
 function AppSidebar() {
+  const { session } = useAuth();
+  const operator = session?.user ?? appConfig.operator;
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border px-4 py-5 group-data-[collapsible=icon]:px-2">
@@ -103,17 +112,17 @@ function AppSidebar() {
             <SidebarMenuButton
               className="h-14 rounded-xl bg-sidebar-accent/70 px-3 hover:bg-sidebar-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-0!"
               size="lg"
-              tooltip={`${appConfig.operator.name} · ${appConfig.operator.role}`}
+              tooltip={`${operator.name} · ${operator.role}`}
             >
               <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary group-data-[collapsible=icon]:size-8">
-                {appConfig.operator.initials}
+                {operator.initials}
               </span>
               <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
                 <span className="block truncate text-sm font-semibold">
-                  {appConfig.operator.name}
+                  {operator.name}
                 </span>
                 <span className="block truncate text-xs text-muted-foreground">
-                  {appConfig.operator.role}
+                  {operator.role}
                 </span>
               </span>
               <span
@@ -165,6 +174,7 @@ function ThemeToggle() {
 }
 
 export function AppShell() {
+  const auth = useAuth();
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
   const lastTrackedPath = useRef<string>(undefined);
@@ -200,6 +210,22 @@ export function AppShell() {
 
           <div className="ml-auto flex items-center">
             <ThemeToggle />
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    aria-label="Sign out"
+                    disabled={auth.isLoggingOut}
+                    onClick={() => void auth.logout()}
+                    size="icon"
+                    variant="ghost"
+                  />
+                }
+              >
+                <HugeiconsIcon icon={Logout02Icon} size={18} strokeWidth={2} />
+              </TooltipTrigger>
+              <TooltipContent>Sign out</TooltipContent>
+            </Tooltip>
           </div>
         </header>
 
