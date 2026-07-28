@@ -1,7 +1,4 @@
-import {
-  DashboardSquare01Icon,
-  Invoice02Icon,
-} from "@hugeicons/core-free-icons";
+import { DashboardSquare01Icon } from "@hugeicons/core-free-icons";
 import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { matchPath } from "react-router";
 
@@ -35,7 +32,34 @@ export type AppRouteRegistration =
   | IndexRouteRegistration
   | PathRouteRegistration;
 
-export const appRoutes: readonly AppRouteRegistration[] = [];
+export const appRoutes: readonly AppRouteRegistration[] = [
+  {
+    id: "overview",
+    index: true,
+    title: "Operations overview",
+    navigation: {
+      label: "Overview",
+      to: "/",
+      icon: DashboardSquare01Icon,
+      end: true,
+    },
+    Component: lazy(() =>
+      import("~/pages/dashboard-page").then((module) => ({
+        default: module.DashboardPage,
+      })),
+    ),
+  },
+  {
+    id: "not-found",
+    path: "*",
+    title: "Page not found",
+    Component: lazy(() =>
+      import("~/pages/not-found-page").then((module) => ({
+        default: module.NotFoundPage,
+      })),
+    ),
+  },
+];
 
 export const navigationItems = appRoutes.flatMap((route) =>
   route.navigation ? [route.navigation] : [],

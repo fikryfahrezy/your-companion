@@ -11,12 +11,14 @@ const dateTimeFormatter = new Intl.DateTimeFormat(appConfig.locale, {
   day: "numeric",
   hour: "numeric",
   minute: "2-digit",
+  timeZone: appConfig.hotel.timeZone,
 });
 
 const longDateFormatter = new Intl.DateTimeFormat(appConfig.locale, {
   weekday: "long",
   month: "long",
   day: "numeric",
+  timeZone: appConfig.hotel.timeZone,
 });
 
 export function formatCurrency(value: number) {

@@ -9,6 +9,7 @@ export const appConfig = {
   hotel: {
     name: "Grand Horizon Hotel",
     location: "Jakarta",
+    timeZone: "Asia/Jakarta",
   },
   operator: {
     firstName: "Alex",
