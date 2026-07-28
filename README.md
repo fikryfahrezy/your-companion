@@ -2,6 +2,10 @@
 
 A responsive hotel operations dashboard for monitoring guest service requests, spotting SLA and payment issues, and moving orders through their lifecycle.
 
+## AI assistance
+
+This project was developed with AI assistance from OpenAI Codex using **GPT-5.6-Sol** with **high reasoning effort**.
+
 ## Features
 
 - Operational overview with active guests, pending and completed orders, today's revenue, average order value, and service demand
@@ -14,6 +18,12 @@ A responsive hotel operations dashboard for monitoring guest service requests, s
 - Loading, empty, error, success, and not-found states
 - Responsive desktop table and mobile order-card layouts
 - Light and dark themes
+- Typed frontend event tracking for navigation and key order workflows
+- Optimistic order-status updates with automatic rollback on failure
+- Simulated real-time order arrival with dashboard notification
+- React component tests with Testing Library, Happy DOM, and Bun's test runner
+- Extra Bed approval workflow with capacity context and approve/reject actions
+- Mock staff authentication, persistent sign-out, safe return paths, and protected dashboard routes
 
 ## Technology and architecture
 
@@ -24,6 +34,22 @@ A responsive hotel operations dashboard for monitoring guest service requests, s
 - **TanStack Query** owns asynchronous server state, caching, retries, and status mutations. UI-only state remains local to components, while order-list controls are represented by URL search parameters.
 - **Mock Service Worker (MSW)** provides an asynchronous in-browser API for listing, filtering, sorting, paginating, retrieving, and updating orders. Mock data is held in memory and resets after a full page reload.
 - **Feature-oriented modules** keep dashboard and order domain models, policies, API access, hooks, and components together. Shared infrastructure lives under `src/app`, `src/components`, and `src/lib`.
+- **Authentication** uses a mock asynchronous session service backed by local storage. TanStack Query owns session state, protected routes preserve internal destinations, and authentication events use the same typed observability layer as order workflows.
+
+Frontend observability emits typed `cmpnion:analytics` browser events. The
+transport-neutral subscriber in `src/lib/analytics.ts` can be connected to a
+production analytics SDK without coupling product features to a vendor. During
+local development, every event is also logged automatically in the browser
+console with the `[CMPNION analytics]` prefix.
+
+Optimistic mutations share a reusable lifecycle hook under
+`src/hooks/use-optimistic-mutation.ts`. Feature-specific cache adapters own the
+snapshot, optimistic update, rollback, reconciliation, and invalidation rules.
+
+While the dashboard is open, the mock API simulates an incoming order every
+five seconds. Each order is added to cached dashboard/list data and surfaced
+through an accessible toast notification. The simulation stops when the
+dashboard is unmounted and prevents overlapping requests.
 
 Daily dashboard metrics use the hotel's `Asia/Jakarta` timezone. Revenue today includes paid, non-cancelled orders placed on the current hotel date. Completed orders use the same date boundary.
 
@@ -32,6 +58,13 @@ Daily dashboard metrics use the hotel's `Asia/Jakarta` timezone. Revenue today i
 - [Bun](https://bun.com/) 1.3.14 or newer
 
 No separate Node.js installation is required.
+
+The app starts with a seeded staff session so reviewers can enter the dashboard immediately. Use **Sign out** to exercise the protected-route flow, then sign in with:
+
+- Email: `manager@cmpnion.test`
+- Password: `companion123`
+
+Authentication is intentionally frontend-only for this take-home. A production implementation must validate sessions and authorize order APIs on a trusted server.
 
 ## Local development
 
@@ -55,7 +88,7 @@ The mock API is enabled by default. Set `VITE_ENABLE_MOCKS=false` when connectin
 | `bun run lint:fix`         | Apply safe lint fixes                          |
 | `bun run fmt:check`        | Check formatting with Oxfmt                    |
 | `bun run fmt`              | Format the repository with Oxfmt               |
-| `bun run test`             | Run Bun unit and integration tests under `src` |
+| `bun run test`             | Run Bun unit, component, and integration tests |
 | `bun run test:e2e:install` | Install Playwright's Chromium browser          |
 | `bun run test:e2e`         | Run the Playwright end-to-end suite            |
 | `bun run test:e2e:ui`      | Open Playwright's interactive test UI          |
@@ -67,6 +100,7 @@ The mock API is enabled by default. Set `VITE_ENABLE_MOCKS=false` when connectin
 | `/`                     | Operations overview                                      |
 | `/orders`               | Searchable and filterable order management               |
 | `/orders/:orderId`      | Order list with the requested order's detail drawer open |
+| `/login`                | Staff sign-in page                                       |
 | `/?apiError=true`       | Dashboard API error and recovery state                   |
 | `/orders?apiError=true` | Order-list API error and recovery state                  |
 
