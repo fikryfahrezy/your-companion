@@ -1,5 +1,10 @@
 import { delay, http, HttpResponse } from "msw";
 import {
+  ORDER_LIST_CONFIG,
+  ORDER_STATUS_TRANSITIONS,
+} from "~/features/orders/config/order-policy";
+import {
+  orderSortDirections,
   orderStatuses,
   serviceTypes,
   type Order,
@@ -8,34 +13,23 @@ import {
   type ServiceType,
   type UpdateOrderStatusInput,
 } from "~/features/orders/model/order";
+import { paginateItems } from "~/lib/pagination";
+import {
+  parsePositiveIntegerParam,
+  parseStringParam,
+} from "~/lib/search-params";
+import { isOneOf } from "~/lib/type-guards";
 import { initialOrders } from "~/mocks/data/orders";
 
 const responseDelay = 450;
 let orders = structuredClone(initialOrders);
 
-const allowedTransitions: Record<OrderStatus, readonly OrderStatus[]> = {
-  New: ["Acknowledged", "Cancelled"],
-  Acknowledged: ["In Progress", "Cancelled"],
-  "In Progress": ["Completed", "Cancelled"],
-  Completed: [],
-  Cancelled: [],
-};
-
 function isOrderStatus(value: unknown): value is OrderStatus {
-  return (
-    typeof value === "string" && orderStatuses.includes(value as OrderStatus)
-  );
+  return isOneOf(value, orderStatuses);
 }
 
 function isServiceType(value: unknown): value is ServiceType {
-  return (
-    typeof value === "string" && serviceTypes.includes(value as ServiceType)
-  );
-}
-
-function toPositiveInteger(value: string | null, fallback: number) {
-  const number = Number(value);
-  return Number.isInteger(number) && number > 0 ? number : fallback;
+  return isOneOf(value, serviceTypes);
 }
 
 export const orderHandlers = [
@@ -54,11 +48,21 @@ export const orderHandlers = [
     const query = searchParams.get("q")?.trim().toLowerCase() ?? "";
     const status = searchParams.get("status");
     const service = searchParams.get("service");
-    const sort = searchParams.get("sort") === "oldest" ? "oldest" : "newest";
-    const requestedPage = toPositiveInteger(searchParams.get("page"), 1);
+    const sort = parseStringParam(
+      searchParams.get("sort"),
+      orderSortDirections,
+      "newest",
+    );
+    const requestedPage = parsePositiveIntegerParam(
+      searchParams.get("page"),
+      1,
+    );
     const pageSize = Math.min(
-      toPositiveInteger(searchParams.get("pageSize"), 8),
-      100,
+      parsePositiveIntegerParam(
+        searchParams.get("pageSize"),
+        ORDER_LIST_CONFIG.defaultPageSize,
+      ),
+      ORDER_LIST_CONFIG.maximumPageSize,
     );
 
     const matchingOrders = orders
@@ -81,17 +85,11 @@ export const orderHandlers = [
         return sort === "newest" ? difference : -difference;
       });
 
-    const total = matchingOrders.length;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const page = Math.min(requestedPage, totalPages);
-    const start = (page - 1) * pageSize;
-    const response: PaginatedOrders = {
-      items: matchingOrders.slice(start, start + pageSize),
-      page,
+    const response: PaginatedOrders = paginateItems(
+      matchingOrders,
+      requestedPage,
       pageSize,
-      total,
-      totalPages,
-    };
+    );
 
     return HttpResponse.json(response);
   }),
@@ -131,7 +129,11 @@ export const orderHandlers = [
         );
       }
 
-      if (!allowedTransitions[order.status].includes(body.status)) {
+      if (
+        !ORDER_STATUS_TRANSITIONS[order.status].some(
+          (status) => status === body.status,
+        )
+      ) {
         return HttpResponse.json(
           {
             message: `An order cannot move from ${order.status} to ${body.status}.`,

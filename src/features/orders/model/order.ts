@@ -1,3 +1,5 @@
+import type { PaginatedResult } from "~/lib/pagination";
+
 export const orderStatuses = [
   "New",
   "Acknowledged",
@@ -15,10 +17,12 @@ export const serviceTypes = [
 ] as const;
 
 export const paymentStatuses = ["Paid", "Pending", "Failed"] as const;
+export const orderSortDirections = ["newest", "oldest"] as const;
 
 export type OrderStatus = (typeof orderStatuses)[number];
 export type ServiceType = (typeof serviceTypes)[number];
 export type PaymentStatus = (typeof paymentStatuses)[number];
+export type OrderSortDirection = (typeof orderSortDirections)[number];
 
 export type Order = {
   id: string;
@@ -38,10 +42,4 @@ export type UpdateOrderStatusInput = {
   status: OrderStatus;
 };
 
-export type PaginatedOrders = {
-  items: Order[];
-  page: number;
-  pageSize: number;
-  total: number;
-  totalPages: number;
-};
+export type PaginatedOrders = PaginatedResult<Order>;
