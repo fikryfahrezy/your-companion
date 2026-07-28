@@ -1,4 +1,7 @@
-import { DashboardSquare01Icon } from "@hugeicons/core-free-icons";
+import {
+  DashboardSquare01Icon,
+  Invoice02Icon,
+} from "@hugeicons/core-free-icons";
 import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { matchPath } from "react-router";
 
@@ -46,6 +49,22 @@ export const appRoutes: readonly AppRouteRegistration[] = [
     Component: lazy(() =>
       import("~/pages/dashboard-page").then((module) => ({
         default: module.DashboardPage,
+      })),
+    ),
+  },
+  {
+    id: "orders",
+    path: "orders/:orderId?",
+    title: "Order management",
+    navigation: {
+      label: "Orders",
+      to: "/orders",
+      icon: Invoice02Icon,
+      end: false,
+    },
+    Component: lazy(() =>
+      import("~/pages/orders-page").then((module) => ({
+        default: module.OrdersPage,
       })),
     ),
   },
