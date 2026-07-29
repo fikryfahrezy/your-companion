@@ -10,22 +10,15 @@ This project was developed with AI assistance from OpenAI Codex using **GPT-5.6-
 
 ## Features
 
-- Operational overview with active guests, pending and completed orders, today's revenue, average order value, and service demand
-- Search by guest name, order ID, or room number
-- Combined status and service filters with newest/oldest sorting
-- Order detail drawer with guest, request, payment, and lifecycle information
-- Validated `New → Acknowledged → In Progress → Completed` transitions
-- Cancellation from non-final states with confirmation and toast feedback
-- Visual highlighting for orders that remain `New` beyond the 15-minute SLA
-- Loading, empty, error, success, and not-found states
-- Responsive desktop table and mobile order-card layouts
-- Light and dark themes
-- Typed frontend event tracking for navigation and key order workflows
-- Optimistic order-status updates with automatic rollback on failure
-- Simulated real-time order arrival with dashboard notification
-- React component tests with Testing Library, Happy DOM, and Bun's test runner
-- Extra Bed approval workflow with capacity context and approve/reject actions
-- Mock staff authentication, persistent sign-out, safe return paths, and protected dashboard routes
+- Operational dashboard showing guest, order, revenue, and service-demand metrics
+- Search, filter, and sort orders by guest, room, status, service, or date
+- Detailed order view with guest, request, payment, and lifecycle information
+- Validated order workflow from `New` through `Completed`, including cancellation
+- SLA monitoring for requests left unacknowledged for more than 15 minutes
+- Extra Bed approval workflow with room-capacity context
+- Simulated real-time order arrivals and dashboard notifications
+- Mock staff authentication with protected dashboard access
+- Responsive desktop and mobile layouts with light and dark themes
 
 ## Technology and architecture
 
@@ -55,18 +48,84 @@ dashboard is unmounted and prevents overlapping requests.
 
 Daily dashboard metrics use the hotel's `Asia/Jakarta` timezone. Revenue today includes paid, non-cancelled orders placed on the current hotel date. Completed orders use the same date boundary.
 
+## Technical decisions
+
+### Component structure
+
+- The codebase is organized by product feature so authentication, dashboard, and
+  order code can evolve independently.
+- Each feature owns its domain types, business rules, API integration, hooks, and
+  interface components.
+- Route-level pages only compose feature modules.
+- Code moves to the shared `components`, `hooks`, or `lib` directories only when
+  multiple features need it.
+
+### State management and data
+
+- TanStack Query manages remote and asynchronous state, including the staff
+  session, order queries, cache invalidation, and mutations.
+- Transient interaction state stays local to the component that owns it.
+- Search, filters, sorting, pagination, and the selected order are encoded in the
+  URL so views are bookmarkable and survive navigation.
+- A typed fetch wrapper provides a consistent API error contract.
+- MSW implements the same REST boundary intended for a future backend.
+- Order mutations update relevant caches optimistically, restore a snapshot on
+  failure, reconcile successful responses, and invalidate affected queries.
+
+### Loading and error handling
+
+- Initial route and query loads render accessible skeleton states instead of an
+  empty layout.
+- Existing list data remains visible during background refetches; busy indicators
+  and disabled pagination prevent conflicting actions.
+- Query failures show the server-provided message and an explicit retry action.
+  The documented error-demo URLs also provide **Restore data**.
+- Server errors are retried up to two times, while client errors are not retried.
+- Mutations never retry automatically because repeating a write may be unsafe.
+- Failed optimistic updates restore the previous cache snapshot and display an
+  error toast.
+- Empty results and unknown order IDs have dedicated states.
+
+### Assumptions
+
+- The dashboard represents one Jakarta hotel and one staff role; multi-property
+  access control is outside the take-home scope.
+- Order timestamps are valid ISO dates. Hotel-day calculations use
+  `Asia/Jakarta`, while amounts are total order values displayed in USD.
+- An order breaches its SLA only while it remains `New` for more than 15 minutes.
+- Payment status is supplied for operational visibility; payment collection and
+  reconciliation happen outside this frontend.
+- Authentication is a frontend demonstration, not a security boundary. The
+  demo credentials are intentionally fixed.
+- MSW is the source of truth during the demo. Order changes are held in memory
+  and reset on a full reload, while theme and authentication state use local
+  storage.
+- The mock API validates lifecycle transitions to approximate server behavior,
+  but a production server must enforce authorization and business rules.
+
+### With another day
+
+1. Replace mock authentication and MSW storage with an authenticated backend and
+   persistent database, including server-owned authorization, lifecycle
+   validation, and audit history.
+2. Replace the incoming-order timer with an SSE or WebSocket channel and define
+   reconnection, deduplication, and conflict behavior for concurrent staff.
+3. Run a focused accessibility and cross-browser pass, then extend Playwright
+   coverage across mobile navigation, keyboard-only workflows, and degraded
+   network conditions.
+
 ## Prerequisites
 
 - [Bun](https://bun.com/) 1.3.14 or newer
 
 No separate Node.js installation is required.
 
-The app starts with a seeded staff session so reviewers can enter the dashboard immediately. Use **Sign out** to exercise the protected-route flow, then sign in with:
+Sign in with the demo staff account:
 
 - Email: `manager@cmpnion.test`
 - Password: `companion123`
 
-Authentication is intentionally frontend-only for this take-home. A production implementation must validate sessions and authorize order APIs on a trusted server.
+Authentication is intentionally frontend-only for now. A production implementation must validate sessions and authorize order APIs on a trusted server.
 
 ## Local development
 
@@ -97,33 +156,81 @@ The mock API is enabled by default. Set `VITE_ENABLE_MOCKS=false` when connectin
 
 ## Routes and test states
 
-| URL                     | Description                                              |
-| ----------------------- | -------------------------------------------------------- |
-| `/`                     | Operations overview                                      |
-| `/orders`               | Searchable and filterable order management               |
-| `/orders/:orderId`      | Order list with the requested order's detail drawer open |
-| `/login`                | Staff sign-in page                                       |
-| `/?apiError=true`       | Dashboard API error and recovery state                   |
-| `/orders?apiError=true` | Order-list API error and recovery state                  |
+| URL                     | Description                                                |
+| ----------------------- | ---------------------------------------------------------- |
+| `/`                     | Operations overview                                        |
+| `/orders`               | Searchable and filterable order management                 |
+| `/orders/:orderId`      | Order list with the requested order's detail drawer open   |
+| `/login`                | Staff sign-in page                                         |
+| `/?apiError=true`       | Test-only flag for the dashboard API error/recovery state  |
+| `/orders?apiError=true` | Test-only flag for the order-list API error/recovery state |
 
-The simulated error pages include **Restore data**, which removes the error flag and reloads the successful state.
+`apiError` is a test-only query flag that simulates an API failure; it does not indicate a real API error. The simulated error pages include **Restore data**, which removes the flag and reloads the successful state.
 
 ## Project structure
 
 ```text
-src/
-├── app/                 # Providers, shell, configuration, and route registry
-├── components/          # Shared UI and feedback components
-├── features/
-│   ├── dashboard/       # Dashboard data derivation, hooks, and views
-│   └── orders/          # Order model, policy, API, hooks, and views
-├── hooks/               # Shared application hooks
-├── lib/                 # API, formatting, pagination, and URL utilities
-├── mocks/               # MSW handlers and in-memory order data
-└── pages/               # Route-level page components
+.
+├── e2e/                         # Playwright tests grouped by product area
+│   ├── auth/                    # Protected-route and sign-in journeys
+│   ├── dashboard/               # Dashboard, recovery, and real-time journeys
+│   └── orders/                  # Order lifecycle and management journeys
+├── public/                      # Files copied directly into the production build
+│   ├── favicon.svg
+│   └── mockServiceWorker.js     # Browser worker generated for MSW
+├── src/
+│   ├── app/                     # Application-wide composition and configuration
+│   │   ├── app-config.ts        # Brand, navigation, and SLA configuration
+│   │   ├── app-shell.tsx        # Shared authenticated page layout
+│   │   ├── providers.tsx        # Query, auth, tooltip, and toast providers
+│   │   ├── query-client.ts      # TanStack Query defaults
+│   │   └── route-registry.ts    # Routes, navigation metadata, and page titles
+│   ├── components/              # Reusable, domain-independent components
+│   │   ├── feedback/            # Loading, error, empty, and toast feedback
+│   │   ├── navigation/          # Shared pagination controls
+│   │   └── ui/                  # Base UI/shadcn-style design primitives
+│   ├── features/                # Product domains with their own vertical slices
+│   │   ├── auth/                # Session API, auth context, model, and route guard
+│   │   ├── dashboard/           # Metrics derivation, dashboard hook, and widgets
+│   │   └── orders/              # Order API, cache, policy, model, hooks, and views
+│   │       ├── api/             # Requests, query keys, query options, and cache updates
+│   │       ├── components/      # Order-specific interface components
+│   │       ├── config/          # Lifecycle and approval business rules
+│   │       ├── hooks/           # Page orchestration and incoming-order simulation
+│   │       ├── lib/             # Order-specific utility functions
+│   │       ├── model/           # Order domain types
+│   │       └── routes/          # Order paths and route registration
+│   ├── hooks/                   # Cross-feature React hooks
+│   ├── lib/                     # Cross-feature API, analytics, formatting, and URL utilities
+│   ├── mocks/                   # MSW bootstrap, request handlers, and seeded data
+│   │   ├── data/                # In-memory order fixtures
+│   │   └── handlers/            # Mock REST endpoint implementations
+│   ├── pages/                   # Thin route-level feature composition
+│   ├── types/                   # Shared application TypeScript types
+│   ├── index.css                # Tailwind setup, tokens, themes, and global styles
+│   ├── index.tsx                # Browser entry point and mock API startup
+│   └── root.tsx                 # Router and top-level route boundaries
+├── test/
+│   └── setup.ts                 # Shared Happy DOM and Testing Library setup
+├── Dockerfile                    # Multi-stage Bun build and Nginx runtime image
+├── compose.yaml                 # Local container orchestration
+├── nginx.conf                   # Static hosting and SPA fallback configuration
+├── playwright.config.ts         # End-to-end browser and development-server setup
+├── vite.config.ts               # Vite, Tailwind, aliases, and React Compiler setup
+├── tsconfig.json                # TypeScript options and `~/` source alias
+├── package.json                 # Dependencies and development commands
+└── bunfig.toml                  # Bun test preload configuration
 ```
 
-End-to-end tests live under `e2e/`. Unit and API integration tests are colocated with their source modules.
+The source code follows a feature-first architecture. A feature owns its domain
+types, business rules, API integration, cache behavior, hooks, and UI. Code moves
+to the top-level `components`, `hooks`, or `lib` directories only when it is
+genuinely shared across features. Route-level files under `pages` remain small:
+they compose feature components instead of containing domain logic.
+
+Unit, component, and API integration tests use the `*.test.ts` or `*.test.tsx`
+naming convention and are colocated with the module they verify. Cross-page user
+journeys use `*.e2e.ts` files under `e2e/`.
 
 ## Production build and Docker
 
