@@ -1,6 +1,5 @@
 import { useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { ordersQueryOptions } from "~/features/orders/api/orders-queries";
+import { useOrdersQuery } from "~/features/orders/api/orders-queries";
 import {
   isApprovalRequired,
   isOrderSlaBreached,
@@ -85,12 +84,10 @@ function getDashboardData(orders: Order[]): DashboardData {
 export function useDashboard() {
   const { removeSearchParams, searchParams } = useUrlSearchParams();
   const simulateError = parseBooleanParam(searchParams.get("apiError"));
-  const ordersQuery = useQuery(
-    ordersQueryOptions({
-      pageSize: ORDER_LIST_CONFIG.dashboardPageSize,
-      simulateError,
-    }),
-  );
+  const ordersQuery = useOrdersQuery({
+    pageSize: ORDER_LIST_CONFIG.dashboardPageSize,
+    simulateError,
+  });
   const data = useMemo(
     () =>
       ordersQuery.data ? getDashboardData(ordersQuery.data.items) : undefined,

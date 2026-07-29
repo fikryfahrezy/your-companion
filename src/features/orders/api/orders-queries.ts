@@ -1,4 +1,8 @@
-import { keepPreviousData, queryOptions } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  queryOptions,
+  useQuery,
+} from "@tanstack/react-query";
 import {
   getOrder,
   listOrders,
@@ -33,6 +37,20 @@ export function orderDetailQueryOptions(orderId: string) {
     queryKey: orderKeys.detail(orderId),
     queryFn: () => getOrder(orderId),
     staleTime: ORDER_QUERY_CONFIG.staleTimeMs,
+  });
+}
+
+export function useOrdersQuery(options: ListOrdersOptions = {}) {
+  return useQuery(ordersQueryOptions(options));
+}
+
+export function useOrderDetailQuery(
+  orderId: string,
+  options: { enabled?: boolean } = {},
+) {
+  return useQuery({
+    ...orderDetailQueryOptions(orderId),
+    enabled: options.enabled ?? Boolean(orderId),
   });
 }
 

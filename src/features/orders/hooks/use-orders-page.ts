@@ -1,9 +1,8 @@
 import { useCallback, useDeferredValue } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import {
-  orderDetailQueryOptions,
-  ordersQueryOptions,
+  useOrderDetailQuery,
+  useOrdersQuery,
 } from "~/features/orders/api/orders-queries";
 import { ORDER_LIST_CONFIG } from "~/features/orders/config/order-policy";
 import {
@@ -55,22 +54,19 @@ export function useOrdersPage() {
   );
   const simulateError = parseBooleanParam(searchParams.get("apiError"));
 
-  const ordersQuery = useQuery(
-    ordersQueryOptions({
-      page,
-      pageSize,
-      q: deferredSearch || undefined,
-      service: serviceFilter === "all" ? undefined : serviceFilter,
-      simulateError,
-      sort: sortDirection,
-      status: statusFilter === "all" ? undefined : statusFilter,
-    }),
-  );
+  const ordersQuery = useOrdersQuery({
+    page,
+    pageSize,
+    q: deferredSearch || undefined,
+    service: serviceFilter === "all" ? undefined : serviceFilter,
+    simulateError,
+    sort: sortDirection,
+    status: statusFilter === "all" ? undefined : statusFilter,
+  });
   const orderFromCurrentPage = ordersQuery.data?.items.find(
     ({ id }) => id === orderId,
   );
-  const orderDetailQuery = useQuery({
-    ...orderDetailQueryOptions(orderId ?? ""),
+  const orderDetailQuery = useOrderDetailQuery(orderId ?? "", {
     enabled: Boolean(orderId && !orderFromCurrentPage),
   });
 
