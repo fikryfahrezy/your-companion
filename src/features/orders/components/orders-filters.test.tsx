@@ -1,6 +1,5 @@
 import { describe, expect, mock, test } from "bun:test";
-import { fireEvent, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, screen, setup } from "@test/react";
 import {
   OrdersFilters,
   type OrdersFilterValues,
@@ -14,17 +13,31 @@ const defaultFilters: OrdersFilterValues = {
   statusFilter: "all",
 };
 
+function renderOrdersFilters(filters: OrdersFilterValues = defaultFilters) {
+  const onChange = mock(() => {});
+  const onClear = mock(() => {});
+  const renderComponent = (nextFilters: OrdersFilterValues) => (
+    <OrdersFilters
+      filters={nextFilters}
+      onChange={onChange}
+      onClear={onClear}
+    />
+  );
+  const view = setup(renderComponent(filters));
+
+  return {
+    ...view,
+    onChange,
+    onClear,
+    rerenderWithFilters: (nextFilters: OrdersFilterValues) => {
+      view.rerender(renderComponent(nextFilters));
+    },
+  };
+}
+
 describe("OrdersFilters component", () => {
   test("reports search input using the URL control contract", () => {
-    const onChange = mock(() => {});
-
-    render(
-      <OrdersFilters
-        filters={defaultFilters}
-        onChange={onChange}
-        onClear={() => {}}
-      />,
-    );
+    const { onChange } = renderOrdersFilters();
 
     fireEvent.change(screen.getByRole("searchbox", { name: "Search orders" }), {
       target: { value: "Room 204" },
@@ -34,16 +47,7 @@ describe("OrdersFilters component", () => {
   });
 
   test("changes the selected status", async () => {
-    const onChange = mock(() => {});
-    const user = userEvent.setup();
-
-    render(
-      <OrdersFilters
-        filters={defaultFilters}
-        onChange={onChange}
-        onClear={() => {}}
-      />,
-    );
+    const { onChange, user } = renderOrdersFilters();
 
     await user.click(
       screen.getByRole("combobox", { name: "Filter by status" }),
@@ -54,32 +58,18 @@ describe("OrdersFilters component", () => {
   });
 
   test("enables clearing only when filters are active", async () => {
-    const onClear = mock(() => {});
-    const user = userEvent.setup();
-    const { rerender } = render(
-      <OrdersFilters
-        filters={defaultFilters}
-        onChange={() => {}}
-        onClear={onClear}
-      />,
-    );
+    const { onClear, rerenderWithFilters, user } = renderOrdersFilters();
 
     const clearButton = screen.getByRole<HTMLButtonElement>("button", {
       name: "Clear",
     });
     expect(clearButton.disabled).toBe(true);
 
-    rerender(
-      <OrdersFilters
-        filters={{
-          ...defaultFilters,
-          hasActiveFilters: true,
-          statusFilter: "New",
-        }}
-        onChange={() => {}}
-        onClear={onClear}
-      />,
-    );
+    rerenderWithFilters({
+      ...defaultFilters,
+      hasActiveFilters: true,
+      statusFilter: "New",
+    });
 
     expect(clearButton.disabled).toBe(false);
     await user.click(clearButton);

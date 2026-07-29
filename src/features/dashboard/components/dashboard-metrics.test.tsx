@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { render, screen, within } from "@testing-library/react";
+import { screen, setup, within } from "@test/react";
 import { DashboardMetrics } from "~/features/dashboard/components/dashboard-metrics";
 
 describe("DashboardMetrics component", () => {
   test("renders every operational metric with its value and context", () => {
-    render(
+    setup(
       <DashboardMetrics
         metrics={{
           activeGuests: 12,

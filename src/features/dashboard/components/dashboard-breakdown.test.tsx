@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { render, screen } from "@testing-library/react";
+import { screen, setup } from "@test/react";
 import {
   OrderFlowCard,
   ServiceDemandCard,
@@ -7,7 +7,7 @@ import {
 
 describe("dashboard breakdown components", () => {
   test("summarizes workload by status", () => {
-    render(
+    setup(
       <OrderFlowCard
         statusCounts={[
           { count: 1, status: "Pending Approval" },
@@ -29,7 +29,7 @@ describe("dashboard breakdown components", () => {
   });
 
   test("marks the highest-demand service", () => {
-    render(
+    setup(
       <ServiceDemandCard
         serviceCounts={[
           { count: 8, service: "Room Service" },

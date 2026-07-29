@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, setup } from "@test/react";
 import { ToastProvider, useToast } from "~/components/feedback/toast-provider";
 
 function ToastTrigger({ variant }: { variant: "success" | "error" }) {
@@ -24,9 +23,7 @@ function ToastTrigger({ variant }: { variant: "success" | "error" }) {
 
 describe("ToastProvider component", () => {
   test("announces notifications with their description", async () => {
-    const user = userEvent.setup();
-
-    render(
+    const { user } = setup(
       <ToastProvider>
         <ToastTrigger variant="success" />
       </ToastProvider>,
@@ -41,9 +38,7 @@ describe("ToastProvider component", () => {
   });
 
   test("lets the user dismiss a notification", async () => {
-    const user = userEvent.setup();
-
-    render(
+    const { user } = setup(
       <ToastProvider>
         <ToastTrigger variant="error" />
       </ToastProvider>,

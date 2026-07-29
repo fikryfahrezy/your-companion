@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { render, screen } from "@testing-library/react";
+import { screen, setup } from "@test/react";
 import { MemoryRouter } from "react-router";
 import {
   AttentionOrdersCard,
@@ -25,7 +25,7 @@ function createOrder(overrides: Partial<Order> = {}): Order {
 
 describe("dashboard order cards", () => {
   test("explains why each order needs attention", () => {
-    render(
+    setup(
       <MemoryRouter>
         <AttentionOrdersCard
           orders={[
@@ -65,7 +65,7 @@ describe("dashboard order cards", () => {
   });
 
   test("links recent orders and the full order list", () => {
-    render(
+    setup(
       <MemoryRouter>
         <RecentOrdersCard orders={[createOrder()]} />
       </MemoryRouter>,

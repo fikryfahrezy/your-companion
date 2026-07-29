@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { render, screen } from "@testing-library/react";
+import { screen, setup } from "@test/react";
 import { MemoryRouter } from "react-router";
 import { OrdersList } from "~/features/orders/components/orders-list";
 import type { Order } from "~/features/orders/model/order";
@@ -22,7 +22,7 @@ function createOrder(overrides: Partial<Order> = {}): Order {
 
 describe("OrdersList component", () => {
   test("renders order data and flags an overdue new order", () => {
-    render(
+    setup(
       <MemoryRouter>
         <OrdersList orders={[createOrder()]} search="q=Alice" />
       </MemoryRouter>,
@@ -36,7 +36,7 @@ describe("OrdersList component", () => {
   });
 
   test("preserves list controls when linking to order details", () => {
-    render(
+    setup(
       <MemoryRouter>
         <OrdersList
           orders={[createOrder({ status: "Acknowledged" })]}

@@ -1,6 +1,5 @@
 import { describe, expect, mock, test } from "bun:test";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, setup } from "@test/react";
 import {
   EmptyOrdersState,
   PageLoadingState,
@@ -9,7 +8,7 @@ import {
 
 describe("query state components", () => {
   test("exposes an accessible loading state", () => {
-    render(<PageLoadingState />);
+    setup(<PageLoadingState />);
 
     const loadingState = screen.getByLabelText("Loading dashboard");
 
@@ -19,9 +18,7 @@ describe("query state components", () => {
   test("lets the user retry and restore a failed query", async () => {
     const onRetry = mock(() => {});
     const onRestore = mock(() => {});
-    const user = userEvent.setup();
-
-    render(
+    const { user } = setup(
       <QueryErrorState
         message="The service is unavailable."
         onRestore={onRestore}
@@ -41,9 +38,7 @@ describe("query state components", () => {
 
   test("lets the user clear controls from the empty state", async () => {
     const onClear = mock(() => {});
-    const user = userEvent.setup();
-
-    render(<EmptyOrdersState onClear={onClear} />);
+    const { user } = setup(<EmptyOrdersState onClear={onClear} />);
 
     expect(screen.getByText("No orders found")).toBeDefined();
     await user.click(

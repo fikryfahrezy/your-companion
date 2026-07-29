@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { render, screen } from "@testing-library/react";
+import { screen, setup } from "@test/react";
 import {
   OrderStatusBadge,
   PaymentStatusBadge,
@@ -8,7 +8,7 @@ import { orderStatuses, paymentStatuses } from "~/features/orders/model/order";
 
 describe("order badge components", () => {
   test("renders every lifecycle status", () => {
-    render(
+    setup(
       <div>
         {orderStatuses.map((status) => (
           <OrderStatusBadge key={status} status={status} />
@@ -22,7 +22,7 @@ describe("order badge components", () => {
   });
 
   test("renders every payment status", () => {
-    render(
+    setup(
       <div>
         {paymentStatuses.map((status) => (
           <PaymentStatusBadge key={status} status={status} />

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen } from "@testing-library/react";
+import { screen, setup } from "@test/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { appConfig } from "~/app/app-config";
 import { demoAuthCredentials, login } from "~/features/auth/api/auth-api";
@@ -17,7 +17,7 @@ function renderProtectedRoute(initialEntry: string) {
     defaultOptions: { queries: { retry: false } },
   });
 
-  return render(
+  return setup(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <MemoryRouter initialEntries={[initialEntry]}>

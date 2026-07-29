@@ -1,7 +1,6 @@
 import { describe, expect, mock, test } from "bun:test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, setup, within } from "@test/react";
 import { useState, type PropsWithChildren } from "react";
 import { ToastProvider } from "~/components/feedback/toast-provider";
 import { OrderDetailsSheet } from "~/features/orders/components/order-details-sheet";
@@ -43,7 +42,7 @@ function TestProviders({ children }: PropsWithChildren) {
 
 describe("OrderDetailsSheet component", () => {
   test("renders complete request details and valid actions", () => {
-    render(
+    setup(
       <OrderDetailsSheet
         onClose={() => {}}
         order={createOrder()}
@@ -63,9 +62,7 @@ describe("OrderDetailsSheet component", () => {
   });
 
   test("requires confirmation before cancellation", async () => {
-    const user = userEvent.setup();
-
-    render(
+    const { user } = setup(
       <OrderDetailsSheet
         onClose={() => {}}
         order={createOrder()}
@@ -89,9 +86,7 @@ describe("OrderDetailsSheet component", () => {
   });
 
   test("shows approval context and decision actions", async () => {
-    const user = userEvent.setup();
-
-    render(
+    const { user } = setup(
       <OrderDetailsSheet
         onClose={() => {}}
         order={createOrder({
@@ -125,7 +120,7 @@ describe("OrderDetailsSheet component", () => {
   });
 
   test("keeps terminal orders read-only", () => {
-    render(
+    setup(
       <OrderDetailsSheet
         onClose={() => {}}
         order={createOrder({ status: "Completed" })}
@@ -143,7 +138,7 @@ describe("OrderDetailsSheet component", () => {
 
   test("shows loading and missing-order states", () => {
     const onClose = mock(() => {});
-    const { rerender } = render(
+    const { rerender } = setup(
       <OrderDetailsSheet
         isLoading
         onClose={onClose}

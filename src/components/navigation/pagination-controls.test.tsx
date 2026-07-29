@@ -1,14 +1,11 @@
 import { describe, expect, mock, test } from "bun:test";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { screen, setup } from "@test/react";
 import { PaginationControls } from "~/components/navigation/pagination-controls";
 
 describe("PaginationControls component", () => {
   test("moves between available pages", async () => {
     const onPageChange = mock(() => {});
-    const user = userEvent.setup();
-
-    render(
+    const { user } = setup(
       <PaginationControls
         onPageChange={onPageChange}
         onPageSizeChange={() => {}}
@@ -26,7 +23,7 @@ describe("PaginationControls component", () => {
   });
 
   test("disables navigation at a single-page boundary", () => {
-    render(
+    setup(
       <PaginationControls
         onPageChange={() => {}}
         onPageSizeChange={() => {}}
@@ -46,7 +43,7 @@ describe("PaginationControls component", () => {
   });
 
   test("does not render controls for an empty result", () => {
-    const { container } = render(
+    const { container } = setup(
       <PaginationControls
         onPageChange={() => {}}
         onPageSizeChange={() => {}}
