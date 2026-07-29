@@ -26,7 +26,7 @@ export function OrderFlowCard({
   const maximumCount = Math.max(...statusCounts.map(({ count }) => count), 1);
 
   return (
-    <Card className="rounded-xl">
+    <Card>
       <CardHeader className="border-b">
         <CardTitle>Order flow</CardTitle>
         <CardDescription>Current workload by order status</CardDescription>
@@ -40,10 +40,10 @@ export function OrderFlowCard({
                   <span className="font-medium">{status}</span>
                   <span className="text-muted-foreground">{count}</span>
                 </div>
-                <div className="h-2 overflow-hidden rounded-full bg-muted">
+                <div className="h-2 overflow-hidden bg-muted">
                   <div
                     className={cn(
-                      "h-full rounded-full transition-[width]",
+                      "h-full transition-[width]",
                       statusIndicatorStyles[status],
                     )}
                     style={{ width: `${(count / maximumCount) * 100}%` }}
@@ -74,7 +74,7 @@ export function ServiceDemandCard({
   const maximumCount = Math.max(...serviceCounts.map(({ count }) => count), 1);
 
   return (
-    <Card className="rounded-xl">
+    <Card>
       <CardHeader className="border-b">
         <CardTitle>Service demand</CardTitle>
         <CardDescription>Units requested by service type</CardDescription>
@@ -85,9 +85,9 @@ export function ServiceDemandCard({
             <span className="w-24 truncate text-xs font-medium sm:w-28">
               {service}
             </span>
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+            <div className="h-2 flex-1 overflow-hidden bg-muted">
               <div
-                className={cn("h-full rounded-full", serviceColors[service])}
+                className={cn("h-full", serviceColors[service])}
                 style={{ width: `${(count / maximumCount) * 100}%` }}
               />
             </div>
@@ -95,10 +95,7 @@ export function ServiceDemandCard({
               {count}
             </span>
             {index === 0 ? (
-              <Badge
-                className="hidden rounded-full sm:inline-flex"
-                variant="secondary"
-              >
+              <Badge className="hidden sm:inline-flex" variant="secondary">
                 Top
               </Badge>
             ) : null}

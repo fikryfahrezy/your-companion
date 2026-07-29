@@ -60,7 +60,7 @@ export function ToastProvider({ children }: PropsWithChildren) {
         {toasts.map((toast) => (
           <div
             className={cn(
-              "pointer-events-auto flex gap-3 rounded-xl border bg-popover p-4 text-popover-foreground shadow-lg",
+              "pointer-events-auto flex gap-3 border bg-popover p-4 text-popover-foreground shadow-lg",
               toast.variant === "error" && "border-destructive/30",
             )}
             key={toast.id}

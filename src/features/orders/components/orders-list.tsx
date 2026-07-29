@@ -64,7 +64,7 @@ export function OrdersList({
                     </Link>
                     {breached ? (
                       <Badge
-                        className="mt-1 flex w-fit rounded-full border-destructive/20 bg-destructive/10 text-[10px] text-destructive"
+                        className="mt-1 border-destructive/20 bg-destructive/10 text-[10px] text-destructive"
                         variant="outline"
                       >
                         <HugeiconsIcon icon={Clock01Icon} size={11} />

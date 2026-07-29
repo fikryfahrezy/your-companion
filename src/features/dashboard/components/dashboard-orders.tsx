@@ -30,7 +30,7 @@ import { orderPaths } from "~/features/orders/routes/order-paths";
 
 export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
   return (
-    <Card className="rounded-xl">
+    <Card>
       <CardHeader className="border-b">
         <CardTitle className="flex items-center gap-2">
           <HugeiconsIcon className="text-destructive" icon={Alert02Icon} />
@@ -45,11 +45,11 @@ export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
 
           return (
             <Link
-              className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/70"
+              className="flex items-center gap-3 border p-3 transition-colors hover:bg-muted/70"
               key={order.id}
               to={orderPaths.details(order.id)}
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
+              <span className="flex size-9 shrink-0 items-center justify-center bg-destructive/10 text-destructive">
                 <HugeiconsIcon
                   icon={
                     approvalRequired
@@ -88,7 +88,7 @@ export function AttentionOrdersCard({ orders }: { orders: Order[] }) {
 
 export function RecentOrdersCard({ orders }: { orders: Order[] }) {
   return (
-    <Card className="rounded-xl">
+    <Card>
       <CardHeader className="border-b">
         <CardTitle>Recent orders</CardTitle>
         <CardAction>

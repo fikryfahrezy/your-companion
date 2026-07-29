@@ -53,7 +53,7 @@ export function OrdersFilters({
           size={15}
         />
         <Input
-          className="rounded-lg pl-8"
+          className="pl-8"
           onChange={(event) => onChange("q", event.target.value, "")}
           placeholder="Guest, order ID, or room"
           type="search"
@@ -65,10 +65,7 @@ export function OrdersFilters({
         onValueChange={(value) => onChange("status", value ?? "all")}
         value={filters.statusFilter}
       >
-        <SelectTrigger
-          className="w-full rounded-lg"
-          aria-label="Filter by status"
-        >
+        <SelectTrigger className="w-full" aria-label="Filter by status">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -85,10 +82,7 @@ export function OrdersFilters({
         onValueChange={(value) => onChange("service", value ?? "all")}
         value={filters.serviceFilter}
       >
-        <SelectTrigger
-          className="w-full rounded-lg"
-          aria-label="Filter by service"
-        >
+        <SelectTrigger className="w-full" aria-label="Filter by service">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -105,7 +99,7 @@ export function OrdersFilters({
         onValueChange={(value) => onChange("sort", value ?? "newest", "newest")}
         value={filters.sortDirection}
       >
-        <SelectTrigger className="w-full rounded-lg" aria-label="Sort orders">
+        <SelectTrigger className="w-full" aria-label="Sort orders">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -115,7 +109,6 @@ export function OrdersFilters({
       </Select>
 
       <Button
-        className="rounded-lg"
         disabled={!filters.hasActiveFilters}
         onClick={onClear}
         variant="ghost"

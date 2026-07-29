@@ -61,7 +61,7 @@ function Navigation() {
             return (
               <SidebarMenuItem key={item.to}>
                 <SidebarMenuButton
-                  className="h-10 rounded-lg px-3 text-sm data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:shadow-sm hover:data-active:bg-sidebar-primary hover:data-active:text-sidebar-primary-foreground"
+                  className="h-10 px-3 text-sm data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:shadow-sm hover:data-active:bg-sidebar-primary hover:data-active:text-sidebar-primary-foreground"
                   isActive={isActive}
                   render={
                     <NavLink
@@ -96,7 +96,7 @@ function AppSidebar() {
           aria-label={`${appConfig.brand.name} overview`}
           to={dashboardPaths.overview}
         >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/20 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-lg">
+          <span className="flex size-9 shrink-0 items-center justify-center bg-primary text-primary-foreground shadow-sm shadow-primary/20 group-data-[collapsible=icon]:size-8">
             <HugeiconsIcon icon={Hotel01Icon} size={20} strokeWidth={2} />
           </span>
           <span className="min-w-0 group-data-[collapsible=icon]:hidden">
@@ -118,7 +118,7 @@ function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              className="h-14 rounded-xl bg-sidebar-accent/70 px-3 hover:bg-sidebar-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-0!"
+              className="h-14 bg-sidebar-accent/70 px-3 hover:bg-sidebar-accent group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-0!"
               size="lg"
               tooltip={`${operator.name} · ${operator.role}`}
             >
@@ -197,7 +197,7 @@ function ThemeSelector() {
     >
       <SelectTrigger
         aria-label={`Theme: ${selectedTheme.label}`}
-        className="h-8 rounded-lg border-0 px-2 hover:bg-muted"
+        className="border-0 px-2 hover:bg-muted"
       >
         <SelectValue>
           <HugeiconsIcon icon={selectedTheme.icon} size={18} strokeWidth={2} />
@@ -232,7 +232,7 @@ export function AppShell() {
   return (
     <SidebarProvider>
       <a
-        className="sr-only z-[110] rounded-md bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        className="sr-only z-[110] bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
         href="#main-content"
       >
         Skip to content

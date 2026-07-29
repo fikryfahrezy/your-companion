@@ -13,10 +13,10 @@ export function PageLoadingState() {
     <div className="space-y-5" aria-label="Loading dashboard" aria-busy="true">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }, (_, index) => (
-          <Skeleton className="h-32 rounded-xl" key={index} />
+          <Skeleton className="h-32" key={index} />
         ))}
       </div>
-      <Skeleton className="h-96 rounded-xl" />
+      <Skeleton className="h-96" />
     </div>
   );
 }
@@ -31,9 +31,9 @@ export function QueryErrorState({
   onRestore?: () => void;
 }) {
   return (
-    <Card className="rounded-xl border-destructive/20 py-12">
+    <Card className="py-12 ring-destructive/20">
       <CardContent className="mx-auto flex max-w-md flex-col items-center text-center">
-        <span className="flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+        <span className="flex size-11 items-center justify-center bg-destructive/10 text-destructive">
           <HugeiconsIcon icon={Alert02Icon} size={22} strokeWidth={2} />
         </span>
         <h2 className="mt-4 font-heading text-lg font-semibold">
@@ -59,7 +59,7 @@ export function QueryErrorState({
 export function EmptyOrdersState({ onClear }: { onClear: () => void }) {
   return (
     <div className="flex min-h-72 flex-col items-center justify-center px-4 text-center">
-      <span className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
+      <span className="flex size-11 items-center justify-center bg-muted text-muted-foreground">
         <HugeiconsIcon icon={Search01Icon} size={21} strokeWidth={2} />
       </span>
       <h2 className="mt-4 font-heading text-base font-semibold">

@@ -32,7 +32,7 @@ export function OrdersPage() {
     <div className="space-y-5">
       <OrdersPageHeader total={orders.pagination.total} />
 
-      <Card className="rounded-xl">
+      <Card>
         <CardHeader className="border-b">
           <div className="flex items-center justify-between gap-3">
             <CardTitle>All orders</CardTitle>

@@ -67,7 +67,7 @@ export function DashboardMetrics({
       aria-label="Daily metrics"
     >
       {metricDefinitions.map((definition) => (
-        <Card className="rounded-xl" key={definition.key}>
+        <Card key={definition.key}>
           <CardHeader>
             <CardTitle className="font-sans text-xs text-muted-foreground">
               {definition.label}
@@ -75,7 +75,7 @@ export function DashboardMetrics({
             <CardAction>
               <span
                 className={cn(
-                  "flex size-9 items-center justify-center rounded-lg",
+                  "flex size-9 items-center justify-center",
                   definition.color,
                 )}
               >

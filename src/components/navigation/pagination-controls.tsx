@@ -35,11 +35,7 @@ export function PaginationControls({
           }}
           value={String(pagination.pageSize)}
         >
-          <SelectTrigger
-            className="w-16 rounded-lg"
-            size="sm"
-            aria-label="Rows per page"
-          >
+          <SelectTrigger className="w-16" size="sm" aria-label="Rows per page">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

@@ -162,10 +162,7 @@ export function OrderDetailsSheet({
               <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">
                 {approvalRequired && order.approval ? (
                   <div
-                    className={cn(
-                      "mb-5 rounded-xl border p-4",
-                      approvalStyles.callout,
-                    )}
+                    className={cn("mb-5 border p-4", approvalStyles.callout)}
                   >
                     <div className="flex gap-3">
                       <HugeiconsIcon
@@ -191,7 +188,7 @@ export function OrderDetailsSheet({
                 ) : null}
 
                 {isOrderSlaBreached(order) ? (
-                  <div className="mb-5 flex gap-3 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-destructive">
+                  <div className="mb-5 flex gap-3 border border-destructive/20 bg-destructive/5 p-3 text-destructive">
                     <HugeiconsIcon
                       className="mt-0.5 shrink-0"
                       icon={Clock01Icon}
@@ -215,7 +212,7 @@ export function OrderDetailsSheet({
                   {approvalRequired ? (
                     <div
                       className={cn(
-                        "mt-3 flex items-center gap-2 rounded-lg p-3 text-sm",
+                        "mt-3 flex items-center gap-2 p-3 text-sm",
                         approvalStyles.waiting,
                       )}
                     >
@@ -223,7 +220,7 @@ export function OrderDetailsSheet({
                       Waiting for a manager to approve or reject this request.
                     </div>
                   ) : order.status === ORDER_STATUS.CANCELLED ? (
-                    <div className="mt-3 flex items-center gap-2 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
+                    <div className="mt-3 flex items-center gap-2 bg-muted p-3 text-sm text-muted-foreground">
                       <HugeiconsIcon icon={Alert02Icon} size={18} />
                       This order was cancelled.
                     </div>
@@ -246,7 +243,7 @@ export function OrderDetailsSheet({
                             ) : null}
                             <span
                               className={cn(
-                                "relative z-10 mx-auto flex size-6 items-center justify-center rounded-full border bg-background text-[10px] font-semibold text-muted-foreground",
+                                "relative z-10 mx-auto flex size-6 items-center justify-center border bg-background text-[10px] font-semibold text-muted-foreground",
                                 complete &&
                                   "border-primary bg-primary text-primary-foreground",
                               )}
@@ -303,7 +300,7 @@ export function OrderDetailsSheet({
                   <h2 className="text-xs font-semibold" id="payment-heading">
                     Payment
                   </h2>
-                  <div className="mt-3 flex items-center justify-between rounded-xl bg-muted/70 p-4">
+                  <div className="mt-3 flex items-center justify-between bg-muted/70 p-4">
                     <PaymentStatusBadge status={order.paymentStatus} />
                     <span className="font-heading text-lg font-semibold">
                       {formatCurrency(order.amount)}
@@ -317,7 +314,7 @@ export function OrderDetailsSheet({
                   <h2 className="text-xs font-semibold" id="request-heading">
                     Special request
                   </h2>
-                  <p className="mt-3 rounded-xl border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-3 border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
                     {order.specialRequest || "No special request provided."}
                   </p>
                 </section>
@@ -348,7 +345,7 @@ export function OrderDetailsSheet({
             </>
           ) : (
             <div className="flex h-full flex-col items-center justify-center p-8 text-center">
-              <span className="flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <span className="flex size-11 items-center justify-center bg-muted text-muted-foreground">
                 <HugeiconsIcon icon={Alert02Icon} size={21} />
               </span>
               <SheetTitle className="mt-4 text-lg">Order not found</SheetTitle>
@@ -364,9 +361,9 @@ export function OrderDetailsSheet({
       </Sheet>
 
       <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-        <AlertDialogContent className="rounded-xl">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogMedia className="rounded-full bg-destructive/10 text-destructive">
+            <AlertDialogMedia className="bg-destructive/10 text-destructive">
               <HugeiconsIcon icon={Alert02Icon} />
             </AlertDialogMedia>
             <AlertDialogTitle>

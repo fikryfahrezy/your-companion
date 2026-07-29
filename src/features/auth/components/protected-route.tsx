@@ -16,7 +16,7 @@ export function ProtectedRoute() {
         aria-label="Checking authentication"
       >
         <div className="text-center">
-          <span className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          <span className="mx-auto flex size-12 items-center justify-center bg-primary text-primary-foreground">
             <HugeiconsIcon icon={Hotel01Icon} size={24} strokeWidth={2} />
           </span>
           <p className="mt-4 text-sm font-semibold">Checking your session…</p>

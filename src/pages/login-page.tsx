@@ -55,7 +55,7 @@ export function LoginPage() {
     <main className="grid min-h-screen bg-muted/40 lg:grid-cols-[1fr_520px]">
       <section className="hidden bg-primary p-12 text-primary-foreground lg:flex lg:flex-col lg:justify-between">
         <div className="flex items-center gap-3">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-white/15">
+          <span className="flex size-11 items-center justify-center bg-white/15">
             <HugeiconsIcon icon={Hotel01Icon} size={24} strokeWidth={2} />
           </span>
           <div>
@@ -82,9 +82,9 @@ export function LoginPage() {
       </section>
 
       <section className="flex items-center justify-center p-5 sm:p-10">
-        <Card className="w-full max-w-md rounded-2xl bg-background">
+        <Card className="w-full max-w-md bg-background">
           <CardHeader className="border-b p-6">
-            <span className="mb-3 flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground lg:hidden">
+            <span className="mb-3 flex size-10 items-center justify-center bg-primary text-primary-foreground lg:hidden">
               <HugeiconsIcon icon={Hotel01Icon} size={21} strokeWidth={2} />
             </span>
             <h1 className="font-heading text-2xl font-medium">Staff sign in</h1>
@@ -104,7 +104,7 @@ export function LoginPage() {
                 <Input
                   aria-invalid={Boolean(form.formState.errors.email)}
                   autoComplete="email"
-                  className="mt-1.5 h-10 rounded-lg"
+                  className="mt-1.5 h-10"
                   id="email"
                   type="email"
                   {...form.register("email")}
@@ -122,7 +122,7 @@ export function LoginPage() {
                 <Input
                   aria-invalid={Boolean(form.formState.errors.password)}
                   autoComplete="current-password"
-                  className="mt-1.5 h-10 rounded-lg"
+                  className="mt-1.5 h-10"
                   id="password"
                   type="password"
                   {...form.register("password")}
@@ -136,7 +136,7 @@ export function LoginPage() {
 
               {form.formState.errors.root ? (
                 <p
-                  className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive"
+                  className="border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive"
                   role="alert"
                 >
                   {form.formState.errors.root.message}
@@ -145,7 +145,7 @@ export function LoginPage() {
 
               <Button
                 aria-busy={auth.isLoggingIn}
-                className="h-10 w-full rounded-lg"
+                className="h-10 w-full"
                 disabled={auth.isLoggingIn || auth.isPending}
                 type="submit"
               >
@@ -153,7 +153,7 @@ export function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-5 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
+            <div className="mt-5 bg-muted p-3 text-xs text-muted-foreground">
               <p className="font-semibold text-foreground">Demo account</p>
               <p className="mt-1">{demoAuthCredentials.email}</p>
               <p>{demoAuthCredentials.password}</p>
