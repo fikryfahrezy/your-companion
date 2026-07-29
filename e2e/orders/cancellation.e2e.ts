@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 import { expectNoLifecycleActions, openOrderDetails } from "./order-details";
 
 test("keeps the order when cancellation is dismissed", async ({ page }) => {

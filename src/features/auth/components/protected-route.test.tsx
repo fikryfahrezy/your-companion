@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { appConfig } from "~/app/app-config";
-import { logout } from "~/features/auth/api/auth-api";
+import { demoAuthCredentials, login } from "~/features/auth/api/auth-api";
 import { ProtectedRoute } from "~/features/auth/components/protected-route";
 import { AuthProvider } from "~/features/auth/context/auth-provider";
 
@@ -38,14 +38,14 @@ describe("ProtectedRoute component", () => {
     localStorage.removeItem(appConfig.auth.sessionStorageKey);
   });
 
-  test("renders protected content for the seeded session", async () => {
+  test("renders protected content for an authenticated session", async () => {
+    await login(demoAuthCredentials);
     renderProtectedRoute("/orders");
 
     expect(await screen.findByText("Protected orders")).toBeDefined();
   });
 
   test("redirects signed-out users and preserves their destination", async () => {
-    await logout();
     renderProtectedRoute("/orders?status=New");
 
     expect(

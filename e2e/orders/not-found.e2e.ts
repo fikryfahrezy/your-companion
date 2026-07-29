@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 
 test("handles a missing order and returns to the orders list", async ({
   page,

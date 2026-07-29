@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 
 test("changes page size and enforces pagination boundaries", async ({
   page,

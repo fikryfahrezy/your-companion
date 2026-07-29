@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 import { openOrderDetails } from "./order-details";
 
 test("approves an Extra Bed request before normal processing", async ({

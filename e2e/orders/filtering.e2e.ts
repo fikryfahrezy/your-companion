@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 
 test("filters orders and keeps filter state in the URL", async ({ page }) => {
   await page.goto("/orders");

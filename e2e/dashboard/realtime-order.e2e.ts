@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 
 test("receives recurring simulated orders and surfaces notifications", async ({
   page,

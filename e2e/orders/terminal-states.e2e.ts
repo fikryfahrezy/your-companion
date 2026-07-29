@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 import { expectNoLifecycleActions, openOrderDetails } from "./order-details";
 
 test("does not show actions for an already completed order", async ({

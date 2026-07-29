@@ -52,7 +52,7 @@ function storeSession(session: AuthSession | null) {
 export async function getAuthSession() {
   await wait(150);
   const storedState = readStoredState();
-  return storedState ? storedState.session : createDemoSession();
+  return storedState?.session ?? null;
 }
 
 export async function login(credentials: LoginCredentials) {

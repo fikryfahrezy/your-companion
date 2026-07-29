@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../fixtures";
 
 test("restores the dashboard after a simulated API failure", async ({
   page,

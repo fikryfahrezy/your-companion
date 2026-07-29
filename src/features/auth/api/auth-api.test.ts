@@ -16,11 +16,8 @@ describe("mock authentication API", () => {
     localStorage.removeItem(appConfig.auth.sessionStorageKey);
   });
 
-  test("starts with the seeded staff session", async () => {
-    const session = await getAuthSession();
-
-    expect(session?.user.email).toBe(demoAuthCredentials.email);
-    expect(session?.user.role).toBe("Duty manager");
+  test("starts signed out when no session has been stored", async () => {
+    expect(await getAuthSession()).toBeNull();
   });
 
   test("persists a signed-out state", async () => {
