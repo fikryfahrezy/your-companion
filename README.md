@@ -1,4 +1,4 @@
-# CMPNION Hotel Service Management Dashboard
+# Your Companion
 
 A responsive hotel operations dashboard for monitoring guest service requests, spotting SLA and payment issues, and moving orders through their lifecycle.
 
