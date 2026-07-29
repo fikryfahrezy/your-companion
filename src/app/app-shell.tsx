@@ -1,6 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Hotel01Icon,
+  LaptopIcon,
   Logout02Icon,
   Moon02Icon,
   Sun03Icon,
@@ -14,6 +15,13 @@ import {
   navigationItems,
 } from "~/app/route-registry";
 import { Button } from "~/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 import {
   Sidebar,
   SidebarContent,
@@ -138,38 +146,73 @@ function AppSidebar() {
   );
 }
 
-function ThemeToggle() {
-  const [dark, setDark] = useState(() => {
+type Theme = "light" | "dark" | "system";
+
+const themeOptions = [
+  { icon: Sun03Icon, label: "Light", value: "light" },
+  { icon: Moon02Icon, label: "Dark", value: "dark" },
+  { icon: LaptopIcon, label: "Follow system", value: "system" },
+] as const satisfies ReadonlyArray<{
+  icon: typeof Sun03Icon;
+  label: string;
+  value: Theme;
+}>;
+
+function isTheme(value: string | null): value is Theme {
+  return themeOptions.some((option) => option.value === value);
+}
+
+function ThemeSelector() {
+  const [theme, setTheme] = useState<Theme>(() => {
     const savedTheme = localStorage.getItem(appConfig.themeStorageKey);
-    if (savedTheme) return savedTheme === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return isTheme(savedTheme) ? savedTheme : "system";
   });
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-    localStorage.setItem(appConfig.themeStorageKey, dark ? "dark" : "light");
-  }, [dark]);
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+    const applyTheme = () => {
+      const isDark =
+        theme === "dark" || (theme === "system" && systemTheme.matches);
+      document.documentElement.classList.toggle("dark", isDark);
+    };
+
+    applyTheme();
+    localStorage.setItem(appConfig.themeStorageKey, theme);
+
+    if (theme !== "system") return;
+
+    systemTheme.addEventListener("change", applyTheme);
+    return () => systemTheme.removeEventListener("change", applyTheme);
+  }, [theme]);
+
+  const selectedTheme =
+    themeOptions.find((option) => option.value === theme) ?? themeOptions[2];
 
   return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button
-            aria-label={dark ? "Use light theme" : "Use dark theme"}
-            onClick={() => setDark((current) => !current)}
-            size="icon"
-            variant="ghost"
-          />
-        }
+    <Select
+      onValueChange={(value) => {
+        if (isTheme(value)) setTheme(value);
+      }}
+      value={theme}
+    >
+      <SelectTrigger
+        aria-label={`Theme: ${selectedTheme.label}`}
+        className="h-8 rounded-lg border-0 px-2 hover:bg-muted"
       >
-        <HugeiconsIcon
-          icon={dark ? Sun03Icon : Moon02Icon}
-          size={18}
-          strokeWidth={2}
-        />
-      </TooltipTrigger>
-      <TooltipContent>{dark ? "Light theme" : "Dark theme"}</TooltipContent>
-    </Tooltip>
+        <SelectValue>
+          <HugeiconsIcon icon={selectedTheme.icon} size={18} strokeWidth={2} />
+          <span className="sr-only">{selectedTheme.label}</span>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent align="end" alignItemWithTrigger={false}>
+        {themeOptions.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            <HugeiconsIcon icon={option.icon} size={16} strokeWidth={2} />
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -209,7 +252,7 @@ export function AppShell() {
           </div>
 
           <div className="ml-auto flex items-center">
-            <ThemeToggle />
+            <ThemeSelector />
             <Tooltip>
               <TooltipTrigger
                 render={
