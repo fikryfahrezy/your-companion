@@ -31,11 +31,11 @@ This project was developed with AI assistance from OpenAI Codex using **GPT-5.6-
 - **Feature-oriented modules** keep dashboard and order domain models, policies, API access, hooks, and components together. Shared infrastructure lives under `src/app`, `src/components`, and `src/lib`.
 - **Authentication** uses a mock asynchronous session service backed by local storage. TanStack Query owns session state, protected routes preserve internal destinations, and authentication events use the same typed observability layer as order workflows.
 
-Frontend observability emits typed `cmpnion:analytics` browser events. The
+Frontend observability emits typed `companion:analytics` browser events. The
 transport-neutral subscriber in `src/lib/analytics.ts` can be connected to a
 production analytics SDK without coupling product features to a vendor. During
 local development, every event is also logged automatically in the browser
-console with the `[CMPNION analytics]` prefix.
+console with the `[COMPANION analytics]` prefix.
 
 Optimistic mutations share a reusable lifecycle hook under
 `src/hooks/use-optimistic-mutation.ts`. Feature-specific cache adapters own the
@@ -122,7 +122,7 @@ No separate Node.js installation is required.
 
 Sign in with the demo staff account:
 
-- Email: `manager@cmpnion.test`
+- Email: `manager@companion.test`
 - Password: `companion123`
 
 Authentication is intentionally frontend-only for now. A production implementation must validate sessions and authorize order APIs on a trusted server.

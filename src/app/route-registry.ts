@@ -38,5 +38,5 @@ export function getPageTitle(pathname: string) {
     return matchPath({ path, end: true }, pathname);
   });
 
-  return route?.title ?? "CMPNION";
+  return route?.title ?? "Your Companion";
 }

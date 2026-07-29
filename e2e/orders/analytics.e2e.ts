@@ -10,8 +10,8 @@ type CapturedEvent = {
 test("tracks navigation and order-management controls", async ({ page }) => {
   await page.addInitScript(() => {
     const capturedEvents: CapturedEvent[] = [];
-    Object.assign(window, { __cmpnionEvents: capturedEvents });
-    window.addEventListener("cmpnion:analytics", (browserEvent) => {
+    Object.assign(window, { __companionEvents: capturedEvents });
+    window.addEventListener("companion:analytics", (browserEvent) => {
       capturedEvents.push((browserEvent as CustomEvent<CapturedEvent>).detail);
     });
   });
@@ -23,8 +23,8 @@ test("tracks navigation and order-management controls", async ({ page }) => {
     .poll(() =>
       page.evaluate(() => {
         const events = (
-          window as typeof window & { __cmpnionEvents: CapturedEvent[] }
-        ).__cmpnionEvents;
+          window as typeof window & { __companionEvents: CapturedEvent[] }
+        ).__companionEvents;
 
         return {
           trackedOrderSearch: events.some(

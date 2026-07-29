@@ -1,13 +1,13 @@
 export const appConfig = {
   brand: {
-    name: "CMPNION",
+    name: "Your Companion",
     tagline: "Hotel operations",
   },
   currency: "USD",
   locale: "en-US",
-  themeStorageKey: "cmpnion-theme",
+  themeStorageKey: "companion-theme",
   auth: {
-    sessionStorageKey: "cmpnion-auth-session",
+    sessionStorageKey: "companion-auth-session",
   },
   realtimeSimulation: {
     delayMs: 5_000,

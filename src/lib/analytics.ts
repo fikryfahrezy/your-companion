@@ -1,4 +1,4 @@
-export const analyticsBrowserEventName = "cmpnion:analytics";
+export const analyticsBrowserEventName = "companion:analytics";
 
 type AnalyticsEventInput =
   | { name: "page_viewed"; path: string }
@@ -60,7 +60,7 @@ export function trackEvent<T extends AnalyticsEventInput>(input: T) {
   });
 
   if (import.meta.env.DEV) {
-    console.log("[CMPNION analytics]", event);
+    console.log("[COMPANION analytics]", event);
   }
 
   if (typeof window !== "undefined") {

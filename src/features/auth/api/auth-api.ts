@@ -3,7 +3,7 @@ import type { AuthSession, LoginCredentials } from "~/features/auth/model/auth";
 import { ApiError } from "~/lib/api-client";
 
 export const demoAuthCredentials = {
-  email: "manager@cmpnion.test",
+  email: "manager@companion.test",
   password: "companion123",
 } as const;
 

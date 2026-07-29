@@ -6,7 +6,7 @@ export function getSafeReturnTo(value: string | null) {
   if (!value) return "/";
 
   try {
-    const baseUrl = "https://cmpnion.local";
+    const baseUrl = "https://companion.local";
     const target = new URL(value, baseUrl);
     if (target.origin !== baseUrl || target.pathname === authPaths.login) {
       return "/";
